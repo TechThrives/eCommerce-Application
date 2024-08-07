@@ -1,0 +1,73 @@
+package com.project.digitalshop.config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.digitalshop.dto.MessageResponse;
+import com.project.digitalshop.model.RefreshToken;
+import com.project.digitalshop.repository.RefreshTokenRepository;
+import com.project.digitalshop.services.implementation.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+
+import java.io.IOException;
+import java.util.Optional;
+
+@Configuration
+public class CustomLogoutHandler implements LogoutHandler {
+
+    private final JwtService jwtService;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public CustomLogoutHandler(JwtService jwtService, RefreshTokenRepository refreshTokenRepository) {
+        this.jwtService = jwtService;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
+
+    @Override
+    public void logout(HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            try {
+                MessageResponse messageResponse = new MessageResponse(
+                        "Logout Failed: JWT token is missing or invalid!!!");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
+            } catch (IOException ex) {
+                throw new RuntimeException("Failed to write response: " + ex.getMessage());
+            }
+            return;
+        }
+
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+
+        if (username != null) {
+            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserUsername(username);
+
+            if (refreshTokenOpt.isPresent()) {
+                RefreshToken refreshToken = refreshTokenOpt.get();
+                refreshTokenRepository.delete(refreshToken);
+                try {
+                    MessageResponse messageResponse = new MessageResponse("Logout Successfully!!!");
+                    response.setStatus(HttpStatus.OK.value());
+                    response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
+                } catch (IOException ex) {
+                    throw new RuntimeException("Failed to write response: " + ex.getMessage());
+                }
+            }
+        }
+        try {
+            MessageResponse messageResponse = new MessageResponse("Logout Failed: Invalid JWT token!!!");
+            response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to write response: " + ex.getMessage());
+        }
+    }
+}

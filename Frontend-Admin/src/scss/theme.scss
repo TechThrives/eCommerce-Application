@@ -1,0 +1,39 @@
+/*
+Template Name: TailFox - Responsive Tailwind Admin Dashboard
+Version: 1.0
+Author: Myra Studio
+Email: myrathemes@gmail.com
+File: Main Css File
+*/
+
+@import "config/variables";
+@import "config/config";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Structure
+@import "structure/general";
+@import "structure/sidebar";
+@import "structure/profilebar";
+@import "structure/topbar";
+
+// Components
+@import "custom/reboot";
+@import "custom/buttons";
+@import "custom/badge";
+@import "custom/card";
+@import "custom/forms";
+@import "custom/print";
+@import "custom/helper";
+
+// Plugins
+@import "plugins/swiper";
+@import "plugins/simplebar";
+@import "plugins/apexcharts";
+@import "plugins/dropzone";
+@import "plugins/quilljs";
+@import "plugins/google-map";
+@import "plugins/fullcalendar";
+@import "plugins/wave";

@@ -1,0 +1,35 @@
+//
+// _profilebar.scss
+//
+
+
+// Fullscreen exit icon
+.fullscreen-enable {
+    .uil-focus::before {
+        content: "\eb8d";
+    }
+}
+
+.profile-menu {
+    @apply card rounded-none sticky top-0 h-screen z-40 transition-all duration-300 w-32 min-w-[8rem];
+}
+
+// Hidden View
+html[data-profile-view="hidden"] {
+    .profile-menu {
+        @apply -me-32;
+    }
+}
+
+// Mobile View
+html[data-profile-view="mobile"] {
+    .profile-menu {
+        @apply -me-32 fixed opacity-0 end-0 border-none;
+    }
+
+    &.profile-open {
+        .profile-menu {
+            @apply opacity-100 z-50 me-0;
+        }
+    }
+}

@@ -1,0 +1,32 @@
+//
+// forms.scss
+//
+
+
+@layer components {
+    label {
+        @apply inline-block text-sm font-semibold cursor-pointer text-gray-600;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        @apply font-normal rounded block w-full border-gray-200 text-sm focus:border-gray-300 
+        focus:ring-0 bg-white;
+    }
+
+    .form-checkbox,
+    .form-radio {
+        @apply bg-inherit cursor-pointer border-gray-300 focus:ring-0 focus:ring-offset-0;
+    }
+
+    .form-switch {
+        @apply w-9 h-5 flex items-center appearance-none bg-gray-200 border-2 border-transparent
+        rounded-full focus:ring-0 focus:ring-offset-0 cursor-pointer transition-colors ease-in-out duration-200 checked:bg-none;
+
+        &::before{
+            @apply content-[''] inline-block w-4 h-4 bg-white rounded-full translate-x-0 transform transition
+            ease-in-out checked:translate-x-full duration-200;
+        }
+    }
+}

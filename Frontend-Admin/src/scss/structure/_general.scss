@@ -1,0 +1,48 @@
+//
+// _topbar.scss
+//
+
+
+.app-wrapper {
+    display: flex;
+}
+
+// Page Content
+.app-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-block-size: 100vh;
+    min-width: 300px;
+}
+
+
+// Logo Box
+.logo-box {
+    height: 70px;
+    color: $sidebar-item-color;
+    @apply sticky top-0 z-50 flex items-center justify-center transition-all duration-300;
+
+
+    .logo-light {
+        display: none;
+    }
+
+    .logo-dark {
+        display: block;
+    }
+}
+
+html[data-sidebar-color="dark"] {
+    .app-menu {
+        .logo-box {
+            .logo-light {
+                display: block;
+            }
+
+            .logo-dark {
+                display: none;
+            }
+        }
+    }
+}

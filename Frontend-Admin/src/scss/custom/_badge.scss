@@ -1,0 +1,7 @@
+// 
+//  _badge.scss
+// 
+
+.badge {
+    @apply p-[0.25em_0.4em] text-[75%] leading-none text-white flex items-center justify-center whitespace-nowrap font-semibold;
+}

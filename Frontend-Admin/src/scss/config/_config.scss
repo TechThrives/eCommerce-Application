@@ -1,0 +1,45 @@
+// 
+// _theme-config.scss (:root variable)
+// 
+
+// Font Family (Google Font)
+@import url('https://fonts.googleapis.com/css2?family=REM:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+// Root Variable
+:root {
+    --tw-body-font-family:           theme(fontFamily.base);
+}
+
+// Light Sidebar
+[data-sidebar-color="light"] {
+    --tw-sidebar-bg:                               #FBF7F3;
+    --tw-sidebar-item-color:                       theme(colors.gray.500);
+    --tw-sidebar-item-hover-color:                 theme(colors.black);
+    --tw-sidebar-item-hover-bg:                    theme(backgroundColor.black/5%);
+    --tw-sidebar-item-active-color:                theme(colors.black);
+    --tw-sidebar-item-active-bg:                   theme(backgroundColor.black/7%);
+}
+
+// Dark Sidebar
+[data-sidebar-color="dark"] {
+    --tw-sidebar-bg:                               theme(backgroundColor.neutral.800);
+    --tw-sidebar-item-color:                       theme(colors.neutral.400);
+    --tw-sidebar-item-hover-color:                 theme(colors.white);
+    --tw-sidebar-item-hover-bg:                    theme(backgroundColor.white/5%);
+    --tw-sidebar-item-active-color:                theme(colors.white);
+    --tw-sidebar-item-active-bg:                   theme(backgroundColor.zinc.700/50%);
+}
+
+// Light Topbar
+[data-topbar-color="light"] {
+    --tw-topbar-bg:                               #FBF7F3;
+    --tw-topbar-item-color:                       theme(colors.gray.500);
+    --tw-topbar-item-hover-color:                 theme(colors.primary);
+    --tw-topbar-item-hover-bg:                    theme(backgroundColor.primary/10%);
+    --tw-topbar-item-active-color:                theme(colors.primary);
+    --tw-topbar-item-active-bg:                   theme(backgroundColor.primary/12%);
+}

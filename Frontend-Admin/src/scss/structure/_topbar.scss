@@ -1,0 +1,38 @@
+//
+// _topbar.scss
+//
+
+.app-header {
+    @apply sticky card flex-row rounded-none top-0 border-b border-gray-200;
+    z-index: 35;
+    height: 70px;
+
+    .nav-link {
+        color: $topbar-item-color;
+        @apply rounded-full bg-white border border-gray-200 transition-all ease-in-out;
+
+        &:hover {
+            color: $topbar-item-hover-color;
+            // background-color: $topbar-item-hover-bg;
+        }
+
+        &:is(.open, .show, .active, :active, :focus) {
+            color: $topbar-item-active-color;
+            // background-color: $topbar-item-active-bg;
+        }
+    }
+
+    .logo-box {
+        @apply lg:hidden;
+    }
+}
+
+
+// Full Size Sidebar
+html[data-sidebar-view="mobile"] {
+    .app-header {
+        .logo-box {
+            @apply flex;
+        }
+    }
+}

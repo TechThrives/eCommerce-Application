@@ -1,0 +1,106 @@
+//
+// _apexcharts.scss
+//
+
+.apex-charts {
+    min-height: 10px !important;
+}
+
+.apexcharts-canvas {
+    margin: 0 auto;
+
+    .apexcharts-text,
+    .apexcharts-text.apexcharts-xaxis-label,
+    .apexcharts-text.apexcharts-yaxis-label,
+    .apexcharts-title-text {
+        @apply fill-gray-400;
+    }
+
+    .apexcharts-tooltip.apexcharts-theme-light,
+    .apexcharts-xaxistooltip.apexcharts-theme-light {
+        @apply shadow-none border border-slate-950/75 bg-slate-950/75 text-white;
+    }
+
+    .apexcharts-xaxistooltip-bottom:after,
+    .apexcharts-xaxistooltip-bottom:before {
+        @apply border-b-slate-950/75;
+    }
+
+    .apexcharts-tooltip-series-group.apexcharts-active {
+        @apply text-white;
+    }
+
+    .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
+        @apply border-slate-950 bg-slate-950;
+    }
+}
+
+.apexcharts-legend-series {
+    @apply font-semibold;
+}
+
+.apexcharts-legend-text {
+    @apply text-gray-300;
+    font-size: 13px !important;
+    vertical-align: middle;
+}
+
+.apexcharts-legend-marker {
+    vertical-align: middle;
+    margin-right: 5px !important;
+}
+
+.apexcharts-pie-label {
+    @apply fill-white;
+}
+
+.apex-charts text,
+.apexcharts-tooltip-title,
+.apexcharts-tooltip-text,
+.apexcharts-xaxistooltip-text,
+.apexcharts-yaxis .text,
+.apexcharts-xaxis .text,
+.apexcharts-datalabels text,
+.apexcharts-title-text,
+.apexcharts-legend-text,
+.apexcharts-subtitle-text,
+.apexcharts-tooltip {
+    font-family: $body-font-family !important;
+}
+
+//
+
+//
+// morris.scss
+//
+
+.morris-chart {
+    text {
+        font-family: $body-font-family !important;
+    }
+}
+.morris-hover {
+    position: absolute;
+    z-index: 10;
+
+    &.morris-default-style {
+        font-size: 12px;
+        text-align: center;
+        border-radius: 5px;
+        padding: 10px 12px;
+        font-family: $body-font-family;
+        @apply bg-dark text-white;
+
+        .morris-hover-row-label {
+            font-weight: bold;
+            margin: 0.25em 0;
+            font-family: $body-font-family;
+        }
+
+        .morris-hover-point {
+            white-space: nowrap;
+            margin: 0.1em 0;
+            color: white;
+        }
+    }
+}

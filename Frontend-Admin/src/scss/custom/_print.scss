@@ -1,0 +1,22 @@
+//
+// print.scss
+//
+
+@media print {
+
+    .app-menu,
+    .app-header,
+    .footer {
+        @apply hidden;
+    }
+
+    .app-content,
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    .card {
+        box-shadow: none;
+    }
+}
