@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -69,10 +71,12 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponseDTO getSignedUser() {
-        // User user = userRepository.findById(userId)
-        // .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
         UserResponseDTO userResponseDTO = new UserResponseDTO();
-        // BeanUtils.copyProperties(user, userResponseDTO);
+        BeanUtils.copyProperties(user, userResponseDTO);
         return userResponseDTO;
     }
 

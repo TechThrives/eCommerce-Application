@@ -33,28 +33,23 @@ public class CustomLogoutHandler implements LogoutHandler {
         String authHeader = request.getHeader("Authorization");
 
         try {
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return;
-            }
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                String username = jwtService.extractUsername(token);
 
-            String token = authHeader.substring(7);
-            String username = jwtService.extractUsername(token);
+                if (username != null) {
+                    Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserUsername(username);
 
-            if (username != null) {
-                Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserUsername(username);
-
-                if (refreshTokenOpt.isPresent()) {
-                    RefreshToken refreshToken = refreshTokenOpt.get();
-                    refreshTokenRepository.delete(refreshToken);
-                    MessageResponse messageResponse = new MessageResponse("Logout Successfully!!!");
-                    response.setStatus(HttpStatus.OK.value());
-                    response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
-                    return;
+                    if (refreshTokenOpt.isPresent()) {
+                        RefreshToken refreshToken = refreshTokenOpt.get();
+                        refreshTokenRepository.delete(refreshToken);
+                    }
                 }
             }
 
-            MessageResponse messageResponse = new MessageResponse("Logout Failed: Invalid JWT token!!!");
-            response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+            MessageResponse messageResponse = new MessageResponse("Logout Successfully!!!");
+            response.setStatus(HttpStatus.OK.value());
+            response.setContentType("application/json");
             response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
         } catch (IOException ex) {
             throw new RuntimeException("Failed to write response: " + ex.getMessage());
