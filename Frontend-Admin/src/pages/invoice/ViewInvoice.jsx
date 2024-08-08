@@ -55,11 +55,25 @@ function ViewInvoice() {
   }, [invoiceId, setAppData]);
 
   const printDiv = (divId) => {
+    // Get the content to print
     const printContents = document.getElementById(divId).innerHTML;
-    const originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
+
+    // Create a new window
+    const printWindow = window.open("", "", "height=600,width=800");
+
+    // Write content to the new window
+    printWindow.document.open();
+    printWindow.document.write("<html><head><title>Print</title></head><body>");
+    printWindow.document.write(printContents);
+    printWindow.document.write("</body></html>");
+    printWindow.document.close();
+
+    // Wait for the new window to load before printing
+    printWindow.onload = function () {
+      printWindow.focus(); // Focus on the new window
+      printWindow.print(); // Trigger the print dialog
+      printWindow.close(); // Close the new window
+    };
   };
 
   return (
@@ -85,7 +99,11 @@ function ViewInvoice() {
         <div class="card p-6" id="invoice">
           <div class="flex justify-between">
             <div>
-              <img class="h-6" src={`${process.env.PUBLIC_URL}/assets/images/logo-dark.png`} alt="" />
+              <img
+                class="h-6"
+                src={`${process.env.PUBLIC_URL}/assets/images/logo-dark.png`}
+                alt=""
+              />
 
               <h1 class="mt-2 text-lg md:text-xl font-semibold text-primary">
                 Digital Shop
@@ -96,7 +114,9 @@ function ViewInvoice() {
               <h2 class="text-2xl md:text-3xl font-semibold text-gray-800">
                 Invoice #
               </h2>
-              <span class="mt-1 block text-gray-500">Invoice ID: {invoiceId}</span>
+              <span class="mt-1 block text-gray-500">
+                Invoice ID: {invoiceId}
+              </span>
 
               <address class="mt-2 not-italic text-gray-800">
                 <a
@@ -186,7 +206,7 @@ function ViewInvoice() {
                             {product.name}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                          &#8377;{product.price}
+                            &#8377;{product.price}
                           </td>
                           <td class="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                             <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60">
@@ -210,7 +230,7 @@ function ViewInvoice() {
               <div class="grid grid-cols-1">
                 <table class="w-full text-end">
                   <tbody>
-                  <tr>
+                    <tr>
                       <td class="py-1 font-medium">Payment Method:</td>
                       <td class="py-1 font-medium">{invoice.paymentMethod}</td>
                     </tr>
@@ -220,7 +240,9 @@ function ViewInvoice() {
                     </tr>
                     <tr>
                       <td class="py-1 font-medium">Subtotal:</td>
-                      <td class="py-1 font-medium">&#8377;{invoice.subTotal}</td>
+                      <td class="py-1 font-medium">
+                        &#8377;{invoice.subTotal}
+                      </td>
                     </tr>
                     <tr>
                       <td class="py-1 font-medium">Tax:</td>
@@ -228,7 +250,9 @@ function ViewInvoice() {
                     </tr>
                     <tr>
                       <td class="py-1 font-medium">Total Price:</td>
-                      <td class="py-1 font-medium">&#8377;{invoice.totalPrice}</td>
+                      <td class="py-1 font-medium">
+                        &#8377;{invoice.totalPrice}
+                      </td>
                     </tr>
                   </tbody>
                 </table>

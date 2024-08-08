@@ -32,6 +32,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getSignedUser() {
+        UserResponseDTO userResponseDTO = userService.getSignedUser();
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDTO);
+    }
+
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID userId,
             @Valid @ModelAttribute UserUpdateDTO userUpdateDTO) {

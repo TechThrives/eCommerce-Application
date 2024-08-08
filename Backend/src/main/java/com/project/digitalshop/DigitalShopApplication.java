@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@OpenAPIDefinition(info = @Info(title = "My API Definition", description = "All API Definitions", version = "1.0.0", contact = @Contact(name = "DigitalZone", email = "digitalzone0707@gmail.com", url = "http://localhost:8080")), servers = @Server(url = "http://localhost:8080", description = "Development Server"), security = {
+@OpenAPIDefinition(info = @Info(title = "My API Definition", description = "All API Definitions", version = "1.0.0", contact = @Contact(name = "DigitalZone", email = "digitalzone0707@gmail.com", url = "http://192.168.0.111:8080")), servers = @Server(url = "http://192.168.0.111:8080", description = "Development Server"), security = {
 		@SecurityRequirement(name = "JWTAuth")
 })
 @SecurityScheme(name = "JWTAuth", description = "JWT Authentication", scheme = "bearer", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)

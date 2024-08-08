@@ -1,7 +1,29 @@
 import React from "react";
+import { useAppContext } from "../utils/AppContext";
+import { useNavigate } from "react-router-dom";
+import axiosConfig from "../utils/axiosConfig";
 import { handleFullScreenClick } from "../script";
 
 export default function RightMenu() {
+  const { setUser } = useAppContext();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      const response = await axiosConfig.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/auth/sign-out`
+      );
+      if (response.data) {
+        setUser(null);
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("refresh_token");
+        navigate("/sign-in");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <>
       <div className="profile-menu">
@@ -20,7 +42,7 @@ export default function RightMenu() {
             <span className="text-sm">Admin</span>
           </a>
 
-          <div className="flex">
+          <div className="flex flex-col gap-2">
             <button
               data-toggle="fullscreen"
               onClick={handleFullScreenClick}
@@ -30,6 +52,18 @@ export default function RightMenu() {
               <span className="sr-only">Fullscreen Mode</span>
               <span className="flex items-center justify-center h-6 w-6">
                 <i className="uil uil-focus text-2xl"></i>
+              </span>
+            </button>
+
+            <button
+              data-toggle="fullscreen"
+              onClick={handleSignOut}
+              type="button"
+              className="bg-white rounded-full shadow-md p-2"
+            >
+              <span className="sr-only">Sign Out</span>
+              <span className="flex items-center justify-center h-6 w-6">
+                <i className="uil uil-sign-out-alt text-2xl"></i>
               </span>
             </button>
           </div>

@@ -69,7 +69,6 @@ public class AuthenticationService implements IAuthenticationService {
         }
         User user = userRepository.findByUsername(request.getEmail()).orElseThrow(
                 () -> new RuntimeException("User Not Found with this Email : " + request.getEmail()));
-        System.out.println("---------------- User Id:" + user.getId());
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserUsername(request.getEmail());

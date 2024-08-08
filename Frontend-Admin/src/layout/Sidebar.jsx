@@ -100,6 +100,22 @@ export default function Sidebar() {
         ],
       },
     },
+    {
+      "menu-item": {
+        href: "#",
+        "menu-icon": "uil uil-user",
+        "menu-text": "Profile",
+        "sub-menu": [
+          {
+            "menu-item": {
+              href: "/settings",
+              "menu-text": "Settings",
+              "menu-icon": "uil uil-paragraph",
+            },
+          },
+        ],
+      },
+    },
   ];
   return (
     <>

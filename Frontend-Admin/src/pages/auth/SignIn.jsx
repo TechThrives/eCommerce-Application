@@ -1,7 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
+import axiosConfig from "../../utils/axiosConfig";
+import { useAppContext } from "../../utils/AppContext";
+import { useNavigate, Navigate } from "react-router-dom";
 
 export default function SignIn() {
-  return (
+  const { user, setUser } = useAppContext();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleSignIn = async () => {
+    try {
+      const response = await axiosConfig.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/auth/sign-in`,
+        {
+          email: "abc@abc.abc",
+          username: "emilys",
+          password: "abc@abc.abcA1",
+          expiresInMins: 1,
+        }
+      );
+      if (response.data) {
+        localStorage.setItem("auth_token", response.data.jwtToken);
+        localStorage.setItem("refresh_token", response.data.refreshToken);
+        setUserData({ email: "", password: "" });
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  console.log(user);
+  return user ? (
+    <Navigate to="/dashboard" />
+  ) : (
     <>
       <div className="bg-white h-screen w-screen flex justify-center items-center">
         <div className="2xl:w-1/4 lg:w-1/3 md:w-1/2 w-full">
@@ -22,6 +57,10 @@ export default function SignIn() {
                 <input
                   id="LoggingEmailAddress"
                   className="form-input"
+                  value={userData.email}
+                  onChange={(e) =>
+                    setUserData({ ...userData, email: e.target.value })
+                  }
                   type="email"
                   placeholder="Enter your email"
                 />
@@ -37,6 +76,10 @@ export default function SignIn() {
                 <input
                   id="loggingPassword"
                   className="form-input"
+                  value={userData.password}
+                  onChange={(e) =>
+                    setUserData({ ...userData, password: e.target.value })
+                  }
                   type="password"
                   placeholder="Enter your password"
                 />
@@ -54,7 +97,10 @@ export default function SignIn() {
               </div>
 
               <div className="flex justify-center mb-3">
-                <button className="btn w-full text-white bg-primary">
+                <button
+                  className="btn w-full text-white bg-primary"
+                  onClick={handleSignIn}
+                >
                   Sign In
                 </button>
               </div>

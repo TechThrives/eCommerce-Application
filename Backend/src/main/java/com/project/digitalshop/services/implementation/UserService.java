@@ -68,6 +68,15 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserResponseDTO getSignedUser() {
+        // User user = userRepository.findById(userId)
+        // .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        // BeanUtils.copyProperties(user, userResponseDTO);
+        return userResponseDTO;
+    }
+
+    @Override
     public UserResponseDTO getUserById(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User Not Found!!!"));

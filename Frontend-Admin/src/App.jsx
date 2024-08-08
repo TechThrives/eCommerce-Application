@@ -22,40 +22,48 @@ import ViewInvoice from "./pages/invoice/ViewInvoice";
 
 function App() {
   return (
-    <AppProvider>
-      <ToastContainer />
+    <>
       <Router>
-        <Routes>
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/recover-password" element={<RecoverPassword />} />
+        <ToastContainer />
+        <AppProvider>
+          <Routes>
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/recover-password" element={<RecoverPassword />} />
 
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            {/* Product */}
-            <Route path="/product-list" element={<ProductList />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route
-              path="/edit-product/:productId"
-              element={<EditProduct />}
-            />
-            {/* Category */}
-            <Route path="/category-list" element={<CategoryList />} />
-            <Route path="/add-category" element={<AddCategory />} />
-            <Route path="/edit-category/:categoryId" element={<EditCategory />} />
-            {/* User */}
-            <Route path="/user-list" element={<UserList />} />
-            <Route path="/view-user/:userId" element={<ViewUser />} />
-            {/* Review */}
-            <Route path="/review-list" element={<ReviewList />} />
-            {/* Invoice */}
-            <Route path="/invoice-list" element={<InvoiceList />} />
-            <Route path="/view-invoice/:invoiceId" element={<ViewInvoice />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              {/* Product */}
+              <Route path="/product-list" element={<ProductList />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route
+                path="/edit-product/:productId"
+                element={<EditProduct />}
+              />
+              {/* Category */}
+              <Route path="/category-list" element={<CategoryList />} />
+              <Route path="/add-category" element={<AddCategory />} />
+              <Route
+                path="/edit-category/:categoryId"
+                element={<EditCategory />}
+              />
+              {/* User */}
+              <Route path="/user-list" element={<UserList />} />
+              <Route path="/view-user/:userId" element={<ViewUser />} />
+              {/* Review */}
+              <Route path="/review-list" element={<ReviewList />} />
+              {/* Invoice */}
+              <Route path="/invoice-list" element={<InvoiceList />} />
+              <Route
+                path="/view-invoice/:invoiceId"
+                element={<ViewInvoice />}
+              />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AppProvider>
       </Router>
-    </AppProvider>
+    </>
   );
 }
 

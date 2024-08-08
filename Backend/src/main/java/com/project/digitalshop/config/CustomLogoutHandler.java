@@ -32,37 +32,27 @@ public class CustomLogoutHandler implements LogoutHandler {
             Authentication authentication) {
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            try {
-                MessageResponse messageResponse = new MessageResponse(
-                        "Logout Failed: JWT token is missing or invalid!!!");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
-            } catch (IOException ex) {
-                throw new RuntimeException("Failed to write response: " + ex.getMessage());
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return;
             }
-            return;
-        }
 
-        String token = authHeader.substring(7);
-        String username = jwtService.extractUsername(token);
+            String token = authHeader.substring(7);
+            String username = jwtService.extractUsername(token);
 
-        if (username != null) {
-            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserUsername(username);
+            if (username != null) {
+                Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByUserUsername(username);
 
-            if (refreshTokenOpt.isPresent()) {
-                RefreshToken refreshToken = refreshTokenOpt.get();
-                refreshTokenRepository.delete(refreshToken);
-                try {
+                if (refreshTokenOpt.isPresent()) {
+                    RefreshToken refreshToken = refreshTokenOpt.get();
+                    refreshTokenRepository.delete(refreshToken);
                     MessageResponse messageResponse = new MessageResponse("Logout Successfully!!!");
                     response.setStatus(HttpStatus.OK.value());
                     response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
-                } catch (IOException ex) {
-                    throw new RuntimeException("Failed to write response: " + ex.getMessage());
+                    return;
                 }
             }
-        }
-        try {
+
             MessageResponse messageResponse = new MessageResponse("Logout Failed: Invalid JWT token!!!");
             response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));

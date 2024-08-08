@@ -18,5 +18,7 @@ public interface IUserService {
 
     UserResponseDTO getUserById(UUID userId);
 
+    UserResponseDTO getSignedUser();
+
     Page<UserResponseDTO> getAllUsers(int pageNo, int pageSize);
 }

@@ -5,24 +5,27 @@ import Footer from "./Footer";
 
 import { Outlet } from "react-router-dom";
 import RightMenu from "./RightMenu";
+import PrivateRoute from "../utils/PrivateRoute";
 
 export default function Layout() {
   return (
     <>
-      <div className="app-wrapper">
-        <Sidebar />
+      <PrivateRoute>
+        <div className="app-wrapper">
+          <Sidebar />
 
-        <div className="app-content">
-          <Header />
+          <div className="app-content">
+            <Header />
 
-          <main className="p-6">
-            <Outlet />
-          </main>
-          <Footer />
+            <main className="p-6">
+              <Outlet />
+            </main>
+            <Footer />
+          </div>
+
+          <RightMenu />
         </div>
-
-        <RightMenu />
-      </div>
+      </PrivateRoute>
     </>
   );
 }

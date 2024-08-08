@@ -30,14 +30,14 @@ public class AuthenticationController {
         this.authService = authService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/sign-up")
     public ResponseEntity<Object> signUp(
             @Valid @RequestBody SignUpRequest request) {
         ResponseEntity<Object> response = authService.signUp(request);
         return (response);
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/sign-in")
     public ResponseEntity<SignInResponse> signIn(
             @Valid @RequestBody SignInRequest request) {
         SignInResponse response = authService.signIn(request);
