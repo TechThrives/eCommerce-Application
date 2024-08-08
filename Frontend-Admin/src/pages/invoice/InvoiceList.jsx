@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAppContext } from "../../utils/AppContext";
-import axios from "axios";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 
 function InvoiceList() {
@@ -13,49 +14,30 @@ function InvoiceList() {
 
   useEffect(() => {
     const fetchInvoices = async () => {
-      const url = `https://api.example.com/invoices?page=${currentPage}&size=${pageSize}`;
       try {
-        
-        const data = {
-          content: [
-            {
-              id: "123e4567-e89b-12d3-a456-426614174000",
-              userId: "123e4567-e89b-12d3-a456-426614174000",
-              products: [
-                {
-                  id: "123e4567-e89b-12d3-a456-426614174001",
-                  name: "Product A",
-                  price: 29.99,
-                  quantity: 2
-                },
-                {
-                  id: "123e4567-e89b-12d3-a456-426614174002",
-                  name: "Product B",
-                  price: 49.99,
-                  quantity: 1
-                }
-              ],
-              subTotal: 109.97,
-              tax: 8.00,
-              totalPrice: 117.97,
-              paymentMethod: "Credit Card",
-              paymentStatus: "Paid"
-            }
-            // Add more sample invoices here
-          ],
-          pageable: {
-            pageNumber: 0,
-            pageSize: 10
-          },
-          totalPages: 1,
-          totalElements: 1
-        };
-        setInvoices(data.content);
-        setTotalPages(data.totalPages);
-        setTotalElements(data.totalElements);
-        setAppData((prev) => ({ ...prev, header: "Invoice List" }));
+        const response = await axiosConfig.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/invoices?pageNo=${
+            currentPage - 1
+          }&pageSize=${pageSize}`
+        );
+        if (response.data) {
+          console.log(response.data);
+          setInvoices(response.data.content);
+          setTotalPages(response.data.totalPages);
+          setTotalElements(response.data.totalElements);
+          setAppData((prev) => ({ ...prev, header: "Invoice List" }));
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(`${data.message}: ${data.details.join(", ")}`, "error");
+          } else {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
       }
     };
 
@@ -91,36 +73,47 @@ function InvoiceList() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {invoices.map((invoice, index) => (
-                      <tr key={invoice.id} className="even:bg-gray-100 odd:bg-white">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                        {index + 1 + (currentPage - 1) * pageSize}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                        {invoice.userId}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {invoice.products.length}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                        &#8377;{invoice.totalPrice.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {invoice.paymentMethod}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {invoice.paymentStatus}
-                        </td>
-                        <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
-                          <a
-                            className="text-primary hover:text-sky-700"
-                            href={`/view-invoice/${invoice.id}`}
-                          >
-                            View Details
-                          </a>
+                    {invoices.length > 0 ? (
+                      invoices.map((invoice, index) => (
+                        <tr key={invoice.id} className="even:bg-gray-100 odd:bg-white">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                          {index + 1 + (currentPage - 1) * pageSize}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                          {invoice.userId}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            {invoice.products.length}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                          &#8377;{invoice.totalPrice.toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            {invoice.paymentMethod}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            {invoice.paymentStatus}
+                          </td>
+                          <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
+                            <a
+                              className="text-primary hover:text-sky-700"
+                              href={`/view-invoice/${invoice.id}`}
+                            >
+                              View Details
+                            </a>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan="5"
+                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
+                        >
+                          No Invoices Found
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -128,11 +121,13 @@ function InvoiceList() {
           </div>
         </div>
         <div className="flex justify-center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+        {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
         </div>
       </div>
     </>

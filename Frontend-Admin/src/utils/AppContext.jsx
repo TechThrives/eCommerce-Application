@@ -13,7 +13,7 @@ export function AppProvider({ children }) {
   const checkAuth = async () => {
     try {
       const response = await axiosConfig.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/users`
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/me`
       );
 
       if (response.data) {

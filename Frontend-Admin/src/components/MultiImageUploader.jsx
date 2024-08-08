@@ -1,41 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { notify } from "../utils/Helper";
 
 function MultiImageUploader({ images, setImages }) {
-  const [previewImages, setPreviewImages] = useState([]);
-
   const handleImageChange = (event) => {
     const files = event.target.files;
     const newImages = [];
-    const newPreviewImages = [];
 
     for (let i = 0; i < files.length; i++) {
-      // Only accept image files
       if (files[i].type.startsWith("image/")) {
-        //max file size 2 mb
         if (files[i].size > 2 * 1024 * 1024) {
           notify("Max file size is 2 MB", "warning");
           continue;
         }
         newImages.push(files[i]);
-        newPreviewImages.push(URL.createObjectURL(files[i]));
       }
     }
 
     setImages([...images, ...newImages]);
-    setPreviewImages([...previewImages, ...newPreviewImages]);
   };
 
   const handleImageRemove = (index) => {
     const newImages = [...images];
-    const newPreviewImages = [...previewImages];
-
+    URL.revokeObjectURL(newImages[index].preview);
     newImages.splice(index, 1);
-    newPreviewImages.splice(index, 1);
-
     setImages(newImages);
-    setPreviewImages(newPreviewImages);
   };
+
+  const imagePreviews = useMemo(() => {
+    return images.map((image) => ({
+      file: image,
+      preview: URL.createObjectURL(image),
+    }));
+  }, [images]);
 
   return (
     <div className="w-full">
@@ -61,8 +57,8 @@ function MultiImageUploader({ images, setImages }) {
               />
             </svg>
             <p className="mb-2 text-sm text-gray-700">
-              <span className="font-semibold">Click to upload</span> or drag and
-              drop
+              <span className="font-semibold">Click to upload</span> or drag
+              and drop
             </p>
             <p className="text-xs text-gray-500">PNG, JPG</p>
           </div>
@@ -77,31 +73,30 @@ function MultiImageUploader({ images, setImages }) {
         </label>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {previewImages.map((preview, index) => (
-          <div key={index} className="relative">
-            <img
-              src={preview}
-              alt={`Preview ${index + 1}`}
-              className="h-32 w-full object-cover rounded-lg shadow-md"
-            />
-            <div className="absolute top-0 left-0 bg-black text-white px-1 py-1 rounded-bl-lg text-xs">
-              {`${(images[index].size / 1024).toFixed(2)} KB`}
-              {/* Display size in KB */}
+        {images.length > 0 &&
+          imagePreviews.map((preview, index) => (
+            <div key={index} className="relative">
+              <img
+                src={preview.preview}
+                alt={`Preview ${index + 1}`}
+                className="h-32 w-full object-cover rounded-lg shadow-md"
+              />
+              <div className="absolute top-0 left-0 bg-black text-white px-1 py-1 rounded-bl-lg text-xs">
+                {`${(preview.file.size / 1024).toFixed(2)} KB`}
+              </div>
+              <button
+                onClick={() => handleImageRemove(index)}
+                className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md"
+              >
+                Remove
+              </button>
             </div>
-            <button
-              onClick={() => handleImageRemove(index)}
-              className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+          ))}
       </div>
-      {/* Render placeholder image for empty previews */}
       {images.length === 0 && (
         <div className="relative flex items-center justify-center">
           <img
-            src="/assets/images/no-image.png" // Replace with your correct path
+            src="/assets/images/no-image.png"
             alt="No Image"
             className="h-32"
           />

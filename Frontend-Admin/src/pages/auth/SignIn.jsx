@@ -1,25 +1,51 @@
 import React, { useState } from "react";
 import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import { useAppContext } from "../../utils/AppContext";
 import { useNavigate, Navigate } from "react-router-dom";
 
 export default function SignIn() {
-  const { user, setUser } = useAppContext();
+  const { user } = useAppContext();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     email: "",
     password: "",
   });
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    if (!userData.email.trim()) {
+      notify("Email is required.", "error");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(userData.email)) {
+      notify("Email should be valid.", "error");
+      return;
+    }
+
+    if (!userData.password.trim()) {
+      notify("Password is required.", "error");
+      return;
+    }
+
+    if (
+      !/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{6,}$/.test(
+        userData.password
+      )
+    ) {
+      notify(
+        "Password must be at least 6 characters long and contain at least one digit, one lowercase letter, one uppercase letter, one special character, and no whitespace.",
+        "error"
+      );
+      return;
+    }
     try {
       const response = await axiosConfig.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/auth/sign-in`,
         {
-          email: "abc@abc.abc",
-          username: "emilys",
-          password: "abc@abc.abcA1",
-          expiresInMins: 1,
+          email: userData.email,
+          password: userData.password,
         }
       );
       if (response.data) {
@@ -29,7 +55,16 @@ export default function SignIn() {
         navigate("/dashboard");
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
     }
   };
 

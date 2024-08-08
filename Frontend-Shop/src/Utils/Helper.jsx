@@ -21,7 +21,19 @@ export const notify = (msg, type) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
+      });
+      break;
+    case "warning":
+      toast.warning(msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
       break;
     case "success":
@@ -33,7 +45,7 @@ export const notify = (msg, type) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
       });
       break;
     default:

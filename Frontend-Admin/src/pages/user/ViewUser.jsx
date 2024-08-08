@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../utils/AppContext";
-import axios from "axios";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 
 function ViewUser() {
@@ -21,22 +22,24 @@ function ViewUser() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // Simulating API response with static data
-        const userData = {
-          id: "123e4567-e89b-12d3-a456-426614174000",
-          firstName: "John",
-          lastName: "Doe",
-          email: "nLQp6@example.com",
-          phone: "123-456-7890",
-          address: "123 Main St",
-          city: "New York",
-          state: "NY",
-          zip: "10001",
-        };
-        setUser(userData);
-        setAppData((prev) => ({ ...prev, header: "View User" }));
+        const response = await axiosConfig.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/${userId}`
+        );
+        if (response.data) {
+          setUser(response.data);
+          setAppData((prev) => ({ ...prev, header: "User Details" }));
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(`${data.message}: ${data.details.join(", ")}`, "error");
+          } else {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
       }
     };
     fetchUser();
@@ -46,78 +49,55 @@ function ViewUser() {
   useEffect(() => {
     const fetchUserReviews = async () => {
       try {
-        const reviewsData = {
-          content: [
-            {
-              id: "123e4567-e89b-12d3-a456-426614174000",
-              rating: 4.5,
-              comment: "Great product!",
-              createdOn: "2024-07-08T12:00:00",
-              product: {
-                id: "123e4567-e89b-12d3-a456-426614174000",
-                name: "Product Name",
-                slug: "product-name",
-              },
-            },
-          ],
-          pageable: {
-            pageNumber: 0,
-            pageSize: 10,
-          },
-          totalPages: 1,
-          totalElements: 1,
-        };
-        setReviews(reviewsData.content);
-        setTotalReviewPages(reviewsData.totalPages);
-        setTotalReviewElements(reviewsData.totalElements);
+        const response = await axiosConfig.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/reviews/user/${userId}?pageNo=${
+            currentReviewPage - 1
+          }&pageSize=${pageSize}`
+        );
+        if (response.data) {
+          console.log(response.data);
+          setReviews(response.data.content);
+          setTotalReviewPages(response.data.totalPages);
+          setTotalReviewElements(response.data.totalElements);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(`${data.message}: ${data.details.join(", ")}`, "error");
+          } else {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
       }
     };
 
     const fetchInvoices = async () => {
-      const url = `https://api.example.com/invoices?page=${currentInvoicePage}&size=${pageSize}`;
       try {
-        
-        const data = {
-          content: [
-            {
-              id: "123e4567-e89b-12d3-a456-426614174000",
-              userId: "123e4567-e89b-12d3-a456-426614174000",
-              products: [
-                {
-                  id: "123e4567-e89b-12d3-a456-426614174001",
-                  name: "Product A",
-                  price: 29.99,
-                  quantity: 2
-                },
-                {
-                  id: "123e4567-e89b-12d3-a456-426614174002",
-                  name: "Product B",
-                  price: 49.99,
-                  quantity: 1
-                }
-              ],
-              subTotal: 109.97,
-              tax: 8.00,
-              totalPrice: 117.97,
-              paymentMethod: "Credit Card",
-              paymentStatus: "Paid"
-            }
-            // Add more sample invoices here
-          ],
-          pageable: {
-            pageNumber: 0,
-            pageSize: 10
-          },
-          totalPages: 1,
-          totalElements: 1
-        };
-        setInvoices(data.content);
-        setTotalInvoicePages(data.totalPages);
-        setTotalInvoiceElements(data.totalElements);
+        const response = await axiosConfig.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/invoices/user/${userId}?pageNo=${
+            currentInvoicePage - 1
+          }&pageSize=${pageSize}`
+        );
+        if (response.data) {
+          console.log(response.data);
+          setInvoices(response.data.content);
+          setTotalInvoicePages(response.data.totalPages);
+          setTotalInvoiceElements(response.data.totalElements);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(`${data.message}: ${data.details.join(", ")}`, "error");
+          } else {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
       }
     };
 
@@ -200,7 +180,8 @@ function ViewUser() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {reviews.map((review, index) => (
+                      {reviews.length > 0 ? (
+                      reviews.map((review, index) => (
                         <tr
                           key={review.id}
                           className="even:bg-gray-100 odd:bg-white"
@@ -231,7 +212,17 @@ function ViewUser() {
                           </a>
                         </td>
                         </tr>
-                      ))}
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan="5"
+                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
+                        >
+                          No Reviews Found
+                        </td>
+                      </tr>
+                    )}
                     </tbody>
                   </table>
                 </div>
@@ -239,11 +230,13 @@ function ViewUser() {
             </div>
           </div>
           <div className="flex justify-center">
+          {totalReviewPages > 1 && (
             <Pagination
               currentPage={currentReviewPage}
               totalPages={totalReviewPages}
               onPageChange={handleReviewPageChange}
             />
+          )}
           </div>
         </div>
 
@@ -268,39 +261,50 @@ function ViewUser() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {invoices.map((invoice, index) => (
-                      <tr key={invoice.id} className="even:bg-gray-100 odd:bg-white">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                        {index + 1 + (currentInvoicePage - 1) * pageSize}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                        {invoice.userId}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          ${invoice.subTotal.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          ${invoice.tax.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          ${invoice.totalPrice.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {invoice.paymentMethod}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {invoice.paymentStatus}
-                        </td>
-                        <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
-                          <a
-                            className="text-primary hover:text-sky-700"
-                            href={`/view-invoice/${invoice.id}`}
-                          >
-                            View Details
-                          </a>
+                  {invoices.length > 0 ? (
+                      invoices.map((invoice, index) => (
+                        <tr key={invoice.id} className="even:bg-gray-100 odd:bg-white">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                          {index + 1 + (currentInvoicePage - 1) * pageSize}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                          {invoice.userId}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            ${invoice.subTotal.toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            ${invoice.tax.toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            ${invoice.totalPrice.toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            {invoice.paymentMethod}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                            {invoice.paymentStatus}
+                          </td>
+                          <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
+                            <a
+                              className="text-primary hover:text-sky-700"
+                              href={`/view-invoice/${invoice.id}`}
+                            >
+                              View Details
+                            </a>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan="5"
+                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
+                        >
+                          No Invoices Found
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -308,11 +312,13 @@ function ViewUser() {
           </div>
         </div>
         <div className="flex justify-center">
-          <Pagination
-            currentPage={currentInvoicePage}
-            totalPages={totalInvoicePages}
-            onPageChange={handleInvoicePageChange}
-          />
+        {totalInvoicePages > 1 && (
+            <Pagination
+              currentPage={currentInvoicePage}
+              totalPages={totalInvoicePages}
+              onPageChange={handleInvoicePageChange}
+            />
+          )}
         </div>
         </div>
 
