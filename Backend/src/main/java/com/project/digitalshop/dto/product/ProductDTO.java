@@ -28,7 +28,7 @@ public class ProductDTO {
     @NotBlank(message = "Description is required")
     private String description;
     @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price must smaller than Original Price")
     private BigDecimal price;
     @NotNull(message = "Original Price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Original Price must be greater than zero")
