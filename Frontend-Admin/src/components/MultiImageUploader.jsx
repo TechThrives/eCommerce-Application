@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { notify } from "../utils/Helper";
 
 function MultiImageUploader({ images, setImages }) {
@@ -26,6 +26,12 @@ function MultiImageUploader({ images, setImages }) {
     setImages(newImages);
   };
 
+  useEffect(() => {
+    return () => {
+      images.forEach((image) => URL.revokeObjectURL(image.preview));
+    };
+  }, [images]);
+  
   const imagePreviews = useMemo(() => {
     return images.map((image) => ({
       file: image,

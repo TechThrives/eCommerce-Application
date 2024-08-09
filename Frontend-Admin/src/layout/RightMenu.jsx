@@ -11,7 +11,7 @@ export default function RightMenu() {
   const handleSignOut = async () => {
     try {
       const response = await axiosConfig.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/sign-out`
+        `/api/auth/sign-out`
       );
       
         setUser(null);

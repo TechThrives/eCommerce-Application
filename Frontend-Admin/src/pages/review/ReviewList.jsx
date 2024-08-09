@@ -3,6 +3,7 @@ import { useAppContext } from "../../utils/AppContext";
 import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
+import TableView from "../../components/TableView";
 
 function ReviewList() {
   const { setAppData } = useAppContext();
@@ -16,23 +17,17 @@ function ReviewList() {
     const fetchReviews = async () => {
       try {
         const response = await axiosConfig.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/reviews?pageNo=${
-            currentPage - 1
-          }&pageSize=${pageSize}`
+          `/api/reviews?pageNo=${currentPage - 1}&pageSize=${pageSize}`
         );
         if (response.data) {
-          console.log(response.data);
           setReviews(response.data.content);
           setTotalPages(response.data.totalPages);
           setTotalElements(response.data.totalElements);
-          setAppData((prev) => ({ ...prev, header: "Review List" }));
         }
       } catch (error) {
         if (error.response) {
           const { data } = error.response;
           if (data.details && Array.isArray(data.details) && data.message) {
-            notify(`${data.message}: ${data.details.join(", ")}`, "error");
-          } else {
             notify(data.message || "An unexpected error occurred.", "error");
           }
         } else {
@@ -42,102 +37,49 @@ function ReviewList() {
     };
 
     fetchReviews();
-  }, [currentPage, setAppData]);
+    setAppData((prev) => ({ ...prev, header: "Review List" }));
+  }, [currentPage]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  const tableData = {
+    name: "Review List",
+  };
+
+  const columns = [
+    { headerName: "Sr.No.", field: "id", type: "index" },
+    { headerName: "User", field: "user", type: "text" },
+    { headerName: "Product", field: "product", type: "text" },
+    { headerName: "Rating", field: "rating", type: "text" },
+    { headerName: "Comment", field: "comment", type: "longText" },
+    { headerName: "Date", field: "date", type: "date" },
+    {
+      headerName: "Action",
+      field: "actions",
+      type: "actions",
+      actions: ["view", "delete"],
+      className: "font-medium",
+    },
+  ];
+
   return (
     <>
       <div className="card bg-white overflow-hidden">
-        <div className="card-header flex items-center justify-between">
-          <h4 className="card-title">Review List</h4>
-        </div>
-        <div className="p-4">
-          <div className="overflow-x-auto">
-            <div className="min-w-full inline-block align-middle">
-              <div className="border rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead>
-                    <tr>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        Sr.No
-                      </th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        User
-                      </th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        Product
-                      </th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        Rating
-                      </th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        Comment
-                      </th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        Date
-                      </th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {reviews.length > 0 ? (
-                      reviews.map((review, index) => (
-                        <tr
-                          key={review.id}
-                          className="even:bg-gray-100 odd:bg-white"
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {index + 1 + (currentPage - 1) * pageSize}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {`${review.user.firstName} ${review.user.lastName}`}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {review.product.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {review.rating}
-                          </td>
-                          <td className="px-6 py-4 whitespace-wrap text-sm text-gray-800">
-                            {review.comment}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {new Date(review.createdOn).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
-                            <a
-                              className="text-danger hover:text-red-600"
-                              href="#"
-                              onClick={() =>
-                                console.log(`Delete review ${review.id}`)
-                              }
-                            >
-                              Delete
-                            </a>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="5"
-                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
-                        >
-                          No Review Found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TableView
+          tableData={tableData}
+          columns={columns}
+          rows={reviews}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          handleView={(row) => {
+            console.log(row);
+          }}
+          handleDelete={(row) => {
+            console.log(row);
+          }}
+        />
         <div className="flex justify-center">
           {totalPages > 1 && (
             <Pagination

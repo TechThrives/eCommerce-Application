@@ -29,16 +29,17 @@ axiosConfig.interceptors.response.use(
       if (refreshToken) {
         try {
           const response = await axios.post(
-            `${process.env.REACT_APP_BACKEND_URL}/api/auth/refresh-token`,
+            `/api/auth/refresh-token`,
             {
               refreshToken: refreshToken,
             }
           );
-          const newAccessToken = response.data.accessToken;
+          if (response.data) {
           localStorage.setItem("auth_token", response.data.jwtToken);
           localStorage.setItem("refresh_token", response.data.refreshToken);
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${response.data.jwtToken}`;
           return axios(originalRequest);
+        }
         } catch (error) {
           localStorage.removeItem("auth_token");
           localStorage.removeItem("refresh_token");

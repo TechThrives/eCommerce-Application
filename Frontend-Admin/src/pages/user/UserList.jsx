@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../utils/AppContext";
 import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
+import TableView from "../../components/TableView";
 
 function UserList() {
+  const navigate = useNavigate();
   const { setAppData } = useAppContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState([]);
@@ -16,23 +19,19 @@ function UserList() {
     const fetchUsers = async () => {
       try {
         const response = await axiosConfig.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/users?pageNo=${
+          `/api/users?pageNo=${
             currentPage - 1
           }&pageSize=${pageSize}`
         );
         if (response.data) {
-          console.log(response.data);
           setUsers(response.data.content);
           setTotalPages(response.data.totalPages);
           setTotalElements(response.data.totalElements);
-          setAppData((prev) => ({ ...prev, header: "User List" }));
         }
       } catch (error) {
         if (error.response) {
           const { data } = error.response;
           if (data.details && Array.isArray(data.details) && data.message) {
-            notify(`${data.message}: ${data.details.join(", ")}`, "error");
-          } else {
             notify(data.message || "An unexpected error occurred.", "error");
           }
         } else {
@@ -40,80 +39,45 @@ function UserList() {
         }
       }
     };
-
+    
     fetchUsers();
-  }, [currentPage, setAppData]);
+    setAppData((prev) => ({ ...prev, header: "User List" }));
+  }, [currentPage]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  const tableData = {
+    name: "User List",
+  };
+
+  const columns = [
+    { headerName: "Sr.No", field: "id", type: "index" },
+    { headerName: "First Name", field: "firstName", type: "text" },
+    { headerName: "Last Name", field: "lastName", type: "text" },
+    { headerName: "Email", field: "email", type: "text" },
+    { headerName: "Phone Number", field: "phoneNumber", type: "text" },
+    { 
+      headerName: "Action", 
+      field: "actions", 
+      type: "actions", 
+      actions: ["view"], 
+      className: "font-medium" 
+    },
+  ];
+
   return (
     <>
       <div className="card bg-white overflow-hidden">
-        <div className="card-header flex items-center justify-between">
-          <h4 className="card-title">User List</h4>
-        </div>
-        <div className="p-4">
-          <div className="overflow-x-auto">
-            <div className="min-w-full inline-block align-middle">
-              <div className="border rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead>
-                    <tr>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Sr.No</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">First Name</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Last Name</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Email</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Phone Number</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {users.length > 0 ? (
-                      users.map((user, index) => (
-                        <tr key={user.id} className="even:bg-gray-100 odd:bg-white">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {index + 1 + (currentPage - 1) * pageSize}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {user.firstName}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {user.lastName}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {user.email}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {user.phoneNumber}
-                          </td>
-                          <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
-                            <a
-                              className="text-primary hover:text-sky-700"
-                              href={`/view-user/${user.id}`}
-                            >
-                              View Details
-                            </a>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="5"
-                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
-                        >
-                          No Users Found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TableView
+          tableData={tableData}
+          columns={columns}
+          rows={users}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          handleView={(row) => navigate(`/view-user/${row.id}`)}
+        />
         <div className="flex justify-center">
         {totalPages > 1 && (
             <Pagination

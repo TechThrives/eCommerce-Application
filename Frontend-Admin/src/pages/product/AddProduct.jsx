@@ -50,16 +50,12 @@ function AddProduct() {
       setTagInput("");
     }
   };
-
-  useEffect(() => {
-    setAppData((prev) => ({ ...prev, header: "Product Add" }));
-  }, [setAppData]);
-
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axiosConfig.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/categories/all`
+          `/api/categories/all`
         );
         if (response.data) {
           setCategories(response.data);
@@ -68,8 +64,6 @@ function AddProduct() {
         if (error.response) {
           const { data } = error.response;
           if (data.details && Array.isArray(data.details) && data.message) {
-            notify(`${data.message}: ${data.details.join(", ")}`, "error");
-          } else {
             notify(data.message || "An unexpected error occurred.", "error");
           }
         } else {
@@ -78,6 +72,7 @@ function AddProduct() {
       }
     };
     fetchCategories();
+    setAppData((prev) => ({ ...prev, header: "Product Add" }));
   }, []);
 
   const handleSubmit = async (event) => {
@@ -136,7 +131,7 @@ function AddProduct() {
     formData.append("categoryId", product.categoryId);
     try {
       const response = await axiosConfig.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/products`,
+        `/api/products`,
         formData
       );
       if (response.data) {
@@ -167,6 +162,7 @@ function AddProduct() {
       }
     }
   };
+  
   return (
     <>
       <div className="flex flex-col gap-6">

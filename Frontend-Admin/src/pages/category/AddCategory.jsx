@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import { useAppContext } from "../../utils/AppContext";
 
 function AddCategory() {
@@ -15,17 +17,45 @@ function AddCategory() {
     setCategory((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(category);
-    const formData = new FormData();
-    formData.append("name", category.name);
-    formData.append("description", category.description);
+    if (!category.name) {
+      notify("Category name is required", "error");
+      return;
+    }
+    if (!category.description) {
+      notify("Category description is required", "error");
+      return;
+    }
+    try {
+      const response = await axiosConfig.post(
+        `/api/categories`,
+        category
+      );
+      if (response.data) {
+        notify("Category added successfully", "success");
+        setCategory({
+          name: "",
+          description: "",
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
   };
 
   useEffect(() => {
     setAppData((prev) => ({ ...prev, header: "Category Add" }));
-  }, [setAppData]);
+  }, []);
 
   return (
     <>

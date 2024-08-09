@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import axiosConfig from "../../utils/axiosConfig";
+import axios from "axios";
 import { notify } from "../../utils/Helper";
 import { useAppContext } from "../../utils/AppContext";
 import { useNavigate, Navigate } from "react-router-dom";
+import axiosConfig from "../../utils/axiosConfig";
 
 export default function SignIn() {
   const { user } = useAppContext();
@@ -42,7 +43,7 @@ export default function SignIn() {
     }
     try {
       const response = await axiosConfig.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/sign-in`,
+        `/api/auth/sign-in`,
         {
           email: userData.email,
           password: userData.password,
@@ -68,7 +69,6 @@ export default function SignIn() {
     }
   };
 
-  console.log(user);
   return user ? (
     <Navigate to="/dashboard" />
   ) : (

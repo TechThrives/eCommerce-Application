@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../../utils/AppContext";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 
 function EditCategory() {
   const {categoryId} = useParams();
@@ -16,27 +18,61 @@ function EditCategory() {
     setCategory((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(category);
-    const formData = new FormData();
-    formData.append("name", category.name);
-    formData.append("description", category.description);
+    if (!category.name) {
+      notify("Category name is required", "error");
+      return;
+    }
+    if (!category.description) {
+      notify("Category description is required", "error");
+      return;
+    }
+    try {
+      const response = await axiosConfig.put(
+        `/api/categories/${categoryId}`,
+        category
+      );
+      if (response.data) {
+        notify("Category updated successfully", "success");
+        setCategory(response.data);
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
   };
-
   useEffect(() => {
     const fetchCategory = async () => {
-      setCategory({
-        name: "Category Name",
-        description: "Category Description",
-      });
+      try {
+        const response = await axiosConfig.get(`/api/categories/${categoryId}`);
+        if (response.data) {
+          setCategory(response.data);
+        }
+        } catch (error) {
+          if (error.response) {
+            const { data } = error.response;
+            if (data.details && Array.isArray(data.details) && data.message) {
+              notify(data.message || "An unexpected error occurred.", "error");
+              navigate("/category-list");
+            } 
+          } else {
+            notify("An unexpected error occurred.", "error");
+          }
+        }
     };
     fetchCategory();
+    setAppData((prev) => ({ ...prev, header: "Category Edit" }));
   }, [categoryId]);
 
-  useEffect(() => {
-    setAppData((prev) => ({ ...prev, header: "Category Edit" }));
-  }, [setAppData]);
 
   return (
     <>

@@ -3,9 +3,11 @@ import { useAppContext } from "../utils/AppContext";
 
 function Dashboard() {
   const { setAppData } = useAppContext();
+  
   useEffect(() => {
     setAppData((prev) => ({ ...prev, header: "Dashboard" }));
-  }, [setAppData]);
+  }, []);
+
   return (
     <>
       <div className="grid xl:grid-cols-4 md:grid-cols-2 gap-6 mb-6">
