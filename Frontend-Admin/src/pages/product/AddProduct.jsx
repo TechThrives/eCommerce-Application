@@ -8,7 +8,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 function AddProduct() {
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -129,6 +129,7 @@ function AddProduct() {
       formData.append("images", image);
     });
     formData.append("categoryId", product.categoryId);
+    setIsLoading(true);
     try {
       const response = await axiosConfig.post(
         `/api/products`,
@@ -161,6 +162,7 @@ function AddProduct() {
         notify("An unexpected error occurred.", "error");
       }
     }
+    setIsLoading(false);
   };
   
   return (

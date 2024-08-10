@@ -6,7 +6,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import axiosConfig from "../../utils/axiosConfig";
 
 export default function SignIn() {
-  const { user } = useAppContext();
+  const { user, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     email: "",
@@ -41,6 +41,7 @@ export default function SignIn() {
       );
       return;
     }
+    setIsLoading(true);
     try {
       const response = await axiosConfig.post(
         `/api/auth/sign-in`,
@@ -67,6 +68,7 @@ export default function SignIn() {
         notify("An unexpected error occurred.", "error");
       }
     }
+    setIsLoading(false);
   };
 
   return user ? (

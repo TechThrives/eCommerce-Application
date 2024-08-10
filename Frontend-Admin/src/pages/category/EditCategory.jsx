@@ -6,7 +6,7 @@ import { notify } from "../../utils/Helper";
 
 function EditCategory() {
   const {categoryId} = useParams();
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [category, setCategory] = useState({
     name: "",
@@ -28,6 +28,7 @@ function EditCategory() {
       notify("Category description is required", "error");
       return;
     }
+    setIsLoading(true);
     try {
       const response = await axiosConfig.put(
         `/api/categories/${categoryId}`,
@@ -49,6 +50,7 @@ function EditCategory() {
         notify("An unexpected error occurred.", "error");
       }
     }
+    setIsLoading(false);
   };
   useEffect(() => {
     const fetchCategory = async () => {

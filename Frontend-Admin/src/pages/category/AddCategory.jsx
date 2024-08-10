@@ -5,7 +5,7 @@ import { notify } from "../../utils/Helper";
 import { useAppContext } from "../../utils/AppContext";
 
 function AddCategory() {
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [category, setCategory] = useState({
     name: "",
@@ -27,6 +27,7 @@ function AddCategory() {
       notify("Category description is required", "error");
       return;
     }
+    setIsLoading(true);
     try {
       const response = await axiosConfig.post(
         `/api/categories`,
@@ -51,6 +52,7 @@ function AddCategory() {
         notify("An unexpected error occurred.", "error");
       }
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {

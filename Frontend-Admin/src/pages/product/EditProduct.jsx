@@ -9,7 +9,7 @@ import "react-quill/dist/quill.snow.css";
 
 function EditProduct() {
   const {productId} = useParams();
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -169,6 +169,7 @@ function EditProduct() {
       formData.append("images", image);
     });
     formData.append("categoryId", product.categoryId);
+    setIsLoading(true);
     try {
       const response = await axiosConfig.put(
         `/api/products/${productId}`,
@@ -204,6 +205,7 @@ function EditProduct() {
         notify("An unexpected error occurred.", "error");
       }
     }
+    setIsLoading(false);
   };
   
   return (
