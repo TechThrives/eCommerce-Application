@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../../utils/AppContext";
 import MultiImageUploader from "../../components/MultiImageUploader";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 function EditProduct() {
   const {productId} = useParams();
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -50,42 +52,108 @@ function EditProduct() {
     }
   };
 
-  useEffect(() => {
-    setAppData((prev) => ({ ...prev, header: "Product Edit" }));
-  }, [setAppData]);
+  const urlToFile = async (url, filename) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: blob.type });
+  };
+  
 
   useEffect(() => {
     const fetchProduct = async () => {
-      // const response = await fetch("");
-      // const data = await response.json();  
-      setProduct({
-        name: "Product Name",
-        overview: "Short overview of the product",
-        shortDescription: "Brief description",
-        description: "Detailed description of the product",
-        price: 99.99,
-        originalPrice: 129.99,
-        quantity: 10,
-        categoryId: 1,
-      });
-    };
+      try {
+        const response = await axiosConfig.get(`/api/products/${productId}`);
+        if (response.data) {
+          setProduct(response.data);
+          setProduct((prev) => ({ ...prev, categoryId: response.data.category.id }));
+          setTags(response.data.tags);
+          setDescription(response.data.description);
+          const imageFiles = await Promise.all(
+            response.data.imageUrls.map(async (imageUrl) => {
+              const file = await urlToFile(imageUrl, imageUrl); // Ensure urlToFile is correctly defined
+              return file;
+            })
+          );
     
-    const fetchCategories = async () => {
-      // const response = await fetch("");
-      // const data = await response.json();
-      setCategories([
-        { name: "Category 1", id: 1 },
-        { name: "Category 2", id: 2 },
-      ]);
-    };
+          setImages(imageFiles);
+        }
+      } catch (error) {
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+            navigate("/product-list");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
+      }
 
+    }
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosConfig.get(
+          `/api/categories/all`
+        );
+        if (response.data) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
+      }
+    };
     fetchProduct();
     fetchCategories();
+    setAppData((prev) => ({ ...prev, header: "Product Edit" }));
   }, [productId]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(product);
+    if (!images.length) {
+      notify("Product image is required", "error");
+      return;
+    }
+    if (!product.name) {
+      notify("Product name is required", "error");
+      return;
+    }
+    if (!product.categoryId) {
+      notify("Please select a category", "error");
+      return;
+    }
+    if (!product.overview) {
+      notify("Product overview is required", "error");
+      return;
+    }
+    if (!product.shortDescription) {
+      notify("Product short description is required", "error");
+      return;
+    }
+    if (!description) {
+      notify("Product description is required", "error");
+      return;
+    }
+    if (product.originalPrice <= 0) {
+      notify("Product original price is required", "error");
+      return;
+    }
+    if (product.price < 0 || product.price > product.originalPrice) {
+      notify("Product price must be between 0 and original price", "error");
+      return;
+    }
+    if (!tags.length) {
+      notify("At least one tag is required", "error");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", product.name);
     formData.append("overview", product.overview);
@@ -101,8 +169,45 @@ function EditProduct() {
       formData.append("images", image);
     });
     formData.append("categoryId", product.categoryId);
-    console.log(formData.getAll("description"));
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.put(
+        `/api/products/${productId}`,
+        formData
+      );
+      if (response.data) {
+        notify("Product updated successfully", "success");
+        if (response.data) {
+          setProduct(response.data);
+          setProduct((prev) => ({ ...prev, categoryId: response.data.category.id }));
+          setTags(response.data.tags);
+          setDescription(response.data.description);
+          const imageFiles = await Promise.all(
+            response.data.imageUrls.map(async (imageUrl) => {
+              const file = await urlToFile(imageUrl, imageUrl); // Ensure urlToFile is correctly defined
+              return file;
+            })
+          );
+
+          setImages(imageFiles);
+        }
+        
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setIsLoading(false);
   };
+  
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -156,6 +261,9 @@ function EditProduct() {
                   onChange={handleChange}
                   value={product.categoryId}
                 >
+                  <option value="" disabled>
+                    Select Category
+                  </option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -231,9 +339,10 @@ function EditProduct() {
                     id="originalPrice"
                     name="originalPrice"
                     onChange={handleChange}
+                    min={0}
                     value={product.originalPrice}
                     className="form-input px-12 "
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                   <div className="absolute inset-y-0 start-4 flex items-center pointer-events-none z-20">
                     <span className="text-gray-500">&#8377;</span>
@@ -258,8 +367,10 @@ function EditProduct() {
                     name="price"
                     onChange={handleChange}
                     value={product.price}
+                    min={0}
+                    max={product.originalPrice}
                     className="form-input px-12"
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                   <div className="absolute inset-y-0 start-4 flex items-center pointer-events-none z-20">
                     <span className="text-gray-500">&#8377;</span>
@@ -280,7 +391,10 @@ function EditProduct() {
                 <div>
                   <div className="flex flex-wrap items-end gap-2 mb-2 w-full">
                     {tags.map((tag) => (
-                      <span className="flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-primary/10 text-primary">
+                      <span
+                        key={tag}
+                        className="flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-primary/10 text-primary"
+                      >
                         {tag}
                         <button
                           type="button"
@@ -311,7 +425,7 @@ function EditProduct() {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={addTag}
                     className="form-input"
-                    placeholder="Product Name"
+                    placeholder="Product Tags"
                   />
                   <em className="text-xs text-gray-500">
                     Press Enter to add tag

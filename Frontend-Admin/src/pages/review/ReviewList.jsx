@@ -1,131 +1,126 @@
 import React, { useState, useEffect } from "react";
 import { useAppContext } from "../../utils/AppContext";
-import axios from "axios";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
+import TableView from "../../components/TableView";
+import Model from "../../components/Model";
 
 function ReviewList() {
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const[isModelOpen, setIsModelOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
   const pageSize = 10;
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        // Simulating an API call
-        const data = {
-          content: [
-            {
-              id: "123e4567-e89b-12d3-a456-426614174000",
-              rating: 4.5,
-              comment: "Great product!",
-              createdOn: "2024-07-08T12:00:00",
-              user: {
-                id: "123e4567-e89b-12d3-a456-426614174000",
-                firstName: "John",
-                lastName: "Doe",
-                email: "john.doe@example.com"
-              },
-              product: {
-                id: "123e4567-e89b-12d3-a456-426614174000",
-                name: "Product Name",
-                slug: "product-name"
-              }
-            },
-            // Add more sample reviews here
-          ],
-          pageable: {
-            pageNumber: 0,
-            pageSize: 10
-          },
-          totalPages: 1,
-          totalElements: 1
-        };
-        setReviews(data.content);
-        setTotalPages(data.totalPages);
-        setTotalElements(data.totalElements);
-        setAppData((prev) => ({ ...prev, header: "Review List" }));
+        const response = await axiosConfig.get(
+          `/api/reviews?pageNo=${currentPage - 1}&pageSize=${pageSize}`
+        );
+        if (response.data) {
+          setReviews(response.data.content);
+          setTotalPages(response.data.totalPages);
+          setTotalElements(response.data.totalElements);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
       }
     };
 
     fetchReviews();
-  }, [currentPage, setAppData]);
+    setAppData((prev) => ({ ...prev, header: "Review List" }));
+  }, [currentPage]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.delete(
+        `/api/reviews/${selectedReview.id}`
+      );
+      if (response.status === 204) {
+        notify("Review deleted successfully", "success");
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setSelectedReview(null);
+    setIsModelOpen(false);
+    setIsLoading(false);
+  };
+
+  const tableData = {
+    name: "Review List",
+  };
+
+  const columns = [
+    { headerName: "Sr.No.", field: "id", type: "index" },
+    { headerName: "User", field: "user", jsonField: "user.email", type: "text" },
+    { headerName: "Product", field: "product", jsonField: "product.name", type: "text" },
+    { headerName: "Rating", field: "rating", type: "text" },
+    { headerName: "Review", field: "reviewText", type: "longText" },
+    { headerName: "Date", field: "reviewDate", type: "date" },
+    {
+      headerName: "Action",
+      field: "actions",
+      type: "actions",
+      actions: ["view", "delete"],
+      className: "font-medium",
+    },
+  ];
+
   return (
     <>
       <div className="card bg-white overflow-hidden">
-        <div className="card-header flex items-center justify-between">
-          <h4 className="card-title">Review List</h4>
-        </div>
-        <div className="p-4">
-          <div className="overflow-x-auto">
-            <div className="min-w-full inline-block align-middle">
-              <div className="border rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead>
-                    <tr>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Sr.No</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">User</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Product</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Rating</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Comment</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Date</th>
-                      <th className="px-6 py-3 text-start text-sm text-gray-900">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {reviews.map((review, index) => (
-                      <tr key={review.id} className="even:bg-gray-100 odd:bg-white">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                          {index + 1 + (currentPage - 1) * pageSize}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {`${review.user.firstName} ${review.user.lastName}`}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {review.product.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {review.rating}
-                        </td>
-                        <td className="px-6 py-4 whitespace-wrap text-sm text-gray-800">
-                          {review.comment}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                          {new Date(review.createdOn).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 flex gap-1 whitespace-nowrap text-end text-sm font-medium">
-                          
-                          <a
-                            className="text-danger hover:text-red-600"
-                            href="#"
-                            onClick={() => console.log(`Delete review ${review.id}`)}
-                          >
-                            Delete
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+      {isModelOpen && (
+          <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
+        )}
+        <TableView
+          tableData={tableData}
+          columns={columns}
+          rows={reviews}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          handleView={(row) => {
+            console.log(row);
+          }}
+          handleDelete={(row) => {
+            setSelectedReview(row);
+            setIsModelOpen(true);
+          }}
+        />
         <div className="flex justify-center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
         </div>
       </div>
     </>

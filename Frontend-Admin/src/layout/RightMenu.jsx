@@ -11,14 +11,13 @@ export default function RightMenu() {
   const handleSignOut = async () => {
     try {
       const response = await axiosConfig.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/sign-out`
+        `/api/auth/sign-out`
       );
-      if (response.data) {
+      
         setUser(null);
         localStorage.removeItem("auth_token");
         localStorage.removeItem("refresh_token");
         navigate("/sign-in");
-      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }

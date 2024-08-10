@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosConfig from "./axiosConfig";
+import Loader from "../components/Loader";
 
 export const AppContext = createContext({});
 
@@ -11,33 +12,33 @@ export function AppProvider({ children }) {
   const [user, setUser] = useState(null);
 
   const checkAuth = async () => {
-    try {
-      const response = await axiosConfig.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/users`
-      );
-
-      if (response.data) {
-        setUser(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
+    setIsLoading(true);
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      try {
+        const response = await axiosConfig.get("/api/users/me"
+        );
+        if (response.data) {
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setUser(null);
+      } 
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     checkAuth();
-    setIsLoading(false);
   }, [navigate]);
 
   if (isLoading) {
-    return <div>Loadinggggggggggggggggggggggggggggggg...</div>;
+    return <Loader />;
   }
 
   return (
-    <AppContext.Provider value={{ appData, setAppData, user, setUser }}>
+    <AppContext.Provider value={{ appData, setAppData, user, setUser, isLoading, setIsLoading }}>
       {children}
     </AppContext.Provider>
   );

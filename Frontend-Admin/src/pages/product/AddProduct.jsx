@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../utils/AppContext";
 import MultiImageUploader from "../../components/MultiImageUploader";
+import axiosConfig from "../../utils/axiosConfig";
+import { notify } from "../../utils/Helper";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 function AddProduct() {
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -48,26 +50,70 @@ function AddProduct() {
       setTagInput("");
     }
   };
-
-  useEffect(() => {
-    setAppData((prev) => ({ ...prev, header: "Product Add" }));
-  }, [setAppData]);
-
+  
   useEffect(() => {
     const fetchCategories = async () => {
-      // const response = await fetch("");
-      // const data = await response.json();
-      setCategories([
-        { name: "Category 1", id: 1 },
-        { name: "Category 2", id: 2 },
-      ]);
+      try {
+        const response = await axiosConfig.get(
+          `/api/categories/all`
+        );
+        if (response.data) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
+      }
     };
     fetchCategories();
+    setAppData((prev) => ({ ...prev, header: "Product Add" }));
   }, []);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(product);
+    if (!images.length) {
+      notify("Product image is required", "error");
+      return;
+    }
+    if (!product.name) {
+      notify("Product name is required", "error");
+      return;
+    }
+    if (!product.categoryId) {
+      notify("Please select a category", "error");
+      return;
+    }
+    if (!product.overview) {
+      notify("Product overview is required", "error");
+      return;
+    }
+    if (!product.shortDescription) {
+      notify("Product short description is required", "error");
+      return;
+    }
+    if (!description) {
+      notify("Product description is required", "error");
+      return;
+    }
+    if (product.originalPrice <= 0) {
+      notify("Product original price is required", "error");
+      return;
+    }
+    if (product.price < 0 || product.price > product.originalPrice) {
+      notify("Product price must be between 0 and original price", "error");
+      return;
+    }
+    if (!tags.length) {
+      notify("At least one tag is required", "error");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", product.name);
     formData.append("overview", product.overview);
@@ -83,8 +129,42 @@ function AddProduct() {
       formData.append("images", image);
     });
     formData.append("categoryId", product.categoryId);
-    console.log(formData.getAll("description"));
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.post(
+        `/api/products`,
+        formData
+      );
+      if (response.data) {
+        notify("Product added successfully", "success");
+        setProduct({
+          name: "",
+          overview: "",
+          shortDescription: "",
+          price: 0,
+          originalPrice: 0,
+          quantity: "",
+          categoryId: "",
+        });
+        setImages([]);
+        setDescription("");
+        setTags([]);
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setIsLoading(false);
   };
+  
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -138,6 +218,9 @@ function AddProduct() {
                   onChange={handleChange}
                   value={product.categoryId}
                 >
+                  <option value="" disabled>
+                    Select Category
+                  </option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -213,9 +296,10 @@ function AddProduct() {
                     id="originalPrice"
                     name="originalPrice"
                     onChange={handleChange}
+                    min={0}
                     value={product.originalPrice}
                     className="form-input px-12 "
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                   <div className="absolute inset-y-0 start-4 flex items-center pointer-events-none z-20">
                     <span className="text-gray-500">&#8377;</span>
@@ -240,8 +324,10 @@ function AddProduct() {
                     name="price"
                     onChange={handleChange}
                     value={product.price}
+                    min={0}
+                    max={product.originalPrice}
                     className="form-input px-12"
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                   <div className="absolute inset-y-0 start-4 flex items-center pointer-events-none z-20">
                     <span className="text-gray-500">&#8377;</span>
@@ -262,7 +348,10 @@ function AddProduct() {
                 <div>
                   <div className="flex flex-wrap items-end gap-2 mb-2 w-full">
                     {tags.map((tag) => (
-                      <span className="flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-primary/10 text-primary">
+                      <span
+                        key={tag}
+                        className="flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-primary/10 text-primary"
+                      >
                         {tag}
                         <button
                           type="button"
@@ -293,7 +382,7 @@ function AddProduct() {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={addTag}
                     className="form-input"
-                    placeholder="Product Name"
+                    placeholder="Product Tags"
                   />
                   <em className="text-xs text-gray-500">
                     Press Enter to add tag

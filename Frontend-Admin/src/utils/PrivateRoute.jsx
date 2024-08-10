@@ -3,9 +3,9 @@ import { Navigate } from "react-router-dom";
 import { useAppContext } from "./AppContext";
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useAppContext();
+  const { user, isLoading } = useAppContext();
 
-  return user ? children : <Navigate to="/sign-in" />;
+  return isLoading ? <div>Loadinggggg...</div> : user ? children : <Navigate to="/sign-in" />;
 };
 
 export default PrivateRoute;
