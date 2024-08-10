@@ -72,9 +72,9 @@ public class ProductService implements IProductService {
         product.setImageUrls(imageUrls);
 
         product = productRepository.save(product);
-        // Increment product count in the category
         category.incrementProductCount();
         categoryRepository.save(category);
+
         ProductResponseDTO productResponseDTO = new ProductResponseDTO();
         BeanUtils.copyProperties(product, productResponseDTO);
         // Map Category to CategoryDTO
@@ -117,6 +117,10 @@ public class ProductService implements IProductService {
         }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product Not Found!!!"));
+
+        Category category = product.getCategory();
+        category.decrementProductCount();
+        categoryRepository.save(category);
 
         // Get all wishlists that contain the product
         List<Wishlist> wishlists = wishlistRepository.findByProductsContains(product);

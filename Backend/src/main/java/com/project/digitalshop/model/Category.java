@@ -44,4 +44,8 @@ public class Category {
     public void incrementProductCount() {
         this.productCount++;
     }
+
+    public void decrementProductCount() {
+        this.productCount--;
+    }
 }

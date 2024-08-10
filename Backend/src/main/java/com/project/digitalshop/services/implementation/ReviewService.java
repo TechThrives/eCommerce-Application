@@ -51,13 +51,17 @@ public class ReviewService implements IReviewService {
         review.setRating(reviewDTO.getRating());
 
         review = reviewRepository.save(review);
+        product.incrementReviewCount();
+        product = productRepository.save(product);
 
         ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO();
         BeanUtils.copyProperties(review, reviewResponseDTO, "product", "user");
         ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
         BeanUtils.copyProperties(review.getUser(), reviewUserDTO);
+        reviewResponseDTO.setUser(reviewUserDTO);
         ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
         BeanUtils.copyProperties(review.getProduct(), reviewProductDTO);
+        reviewResponseDTO.setProduct(reviewProductDTO);
         return reviewResponseDTO;
     }
 
@@ -75,8 +79,10 @@ public class ReviewService implements IReviewService {
         BeanUtils.copyProperties(existingReview, reviewResponseDTO, "product", "user");
         ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
         BeanUtils.copyProperties(existingReview.getUser(), reviewUserDTO);
+        reviewResponseDTO.setUser(reviewUserDTO);
         ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
         BeanUtils.copyProperties(existingReview.getProduct(), reviewProductDTO);
+        reviewResponseDTO.setProduct(reviewProductDTO);
         return reviewResponseDTO;
     }
 
@@ -85,6 +91,14 @@ public class ReviewService implements IReviewService {
         if (!reviewRepository.existsById(reviewId)) {
             throw new NotFoundException("Review Not Found!!!");
         }
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NotFoundException("Review Not Found!!!"));
+
+        Product product = review.getProduct();
+        product.decrementReviewCount();
+        productRepository.save(product);
+
         reviewRepository.deleteById(reviewId);
     }
 
@@ -97,8 +111,10 @@ public class ReviewService implements IReviewService {
         BeanUtils.copyProperties(review, reviewResponseDTO, "product", "user");
         ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
         BeanUtils.copyProperties(review.getUser(), reviewUserDTO);
+        reviewResponseDTO.setUser(reviewUserDTO);
         ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
         BeanUtils.copyProperties(review.getProduct(), reviewProductDTO);
+        reviewResponseDTO.setProduct(reviewProductDTO);
         return reviewResponseDTO;
     }
 
@@ -115,8 +131,10 @@ public class ReviewService implements IReviewService {
             BeanUtils.copyProperties(review, reviewResponseDTO, "product", "user");
             ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
             BeanUtils.copyProperties(review.getUser(), reviewUserDTO);
+            reviewResponseDTO.setUser(reviewUserDTO);
             ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
             BeanUtils.copyProperties(review.getProduct(), reviewProductDTO);
+            reviewResponseDTO.setProduct(reviewProductDTO);
             return reviewResponseDTO;
         });
     }
@@ -133,8 +151,10 @@ public class ReviewService implements IReviewService {
             BeanUtils.copyProperties(review, reviewResponseDTO, "product", "user");
             ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
             BeanUtils.copyProperties(review.getUser(), reviewUserDTO);
+            reviewResponseDTO.setUser(reviewUserDTO);
             ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
             BeanUtils.copyProperties(review.getProduct(), reviewProductDTO);
+            reviewResponseDTO.setProduct(reviewProductDTO);
             return reviewResponseDTO;
         });
     }
@@ -149,8 +169,10 @@ public class ReviewService implements IReviewService {
             BeanUtils.copyProperties(review, reviewResponseDTO, "product", "user");
             ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
             BeanUtils.copyProperties(review.getUser(), reviewUserDTO);
+            reviewResponseDTO.setUser(reviewUserDTO);
             ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
             BeanUtils.copyProperties(review.getProduct(), reviewProductDTO);
+            reviewResponseDTO.setProduct(reviewProductDTO);
             return reviewResponseDTO;
         });
     }

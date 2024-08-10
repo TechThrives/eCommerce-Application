@@ -75,4 +75,8 @@ public class Product {
     public void incrementReviewCount() {
         this.reviewCount++;
     }
+
+    public void decrementReviewCount() {
+        this.reviewCount--;
+    }
 }
