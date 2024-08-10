@@ -27,21 +27,21 @@ export default function Model({ setIsModelOpen, modelAction }) {
           </button>
         </div>
         <div className="p-6">
-          <p className="text-gray-600">
+          <p className="text-gray-700 font-semibold">
             Are you sure you want to perform this action?
           </p>
         </div>
         <div className="flex justify-end p-4 border-t">
           <button
             type="button"
-            className="py-2 px-4 bg-gray-200 text-gray-800 rounded-md shadow-sm hover:bg-gray-300"
+            className="font-medium py-2 px-4 bg-gray-200 text-gray-800 rounded-md shadow-sm hover:bg-gray-300"
             onClick={handleClose}
           >
             Cancel
           </button>
           <button
             type="button"
-            className="ml-3 py-2 px-4 bg-warning text-white rounded-md shadow-sm hover:bg-yellow-700"
+            className="font-medium ml-3 py-2 px-4 bg-warning text-white rounded-md shadow-sm hover:bg-yellow-700"
             onClick={modelAction}
           >
             Confirm

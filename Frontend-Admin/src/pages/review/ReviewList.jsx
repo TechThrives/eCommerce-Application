@@ -5,6 +5,7 @@ import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 import TableView from "../../components/TableView";
 import Model from "../../components/Model";
+import InfoModal from "../../components/InfoModal";
 
 function ReviewList() {
   const { setAppData, setIsLoading } = useAppContext();
@@ -14,6 +15,7 @@ function ReviewList() {
   const [totalElements, setTotalElements] = useState(0);
   const[isModelOpen, setIsModelOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [isInfoModelOpen, setIsInfoModelOpen ] = useState(false);
   const pageSize = 10;
 
   useEffect(() => {
@@ -79,9 +81,9 @@ function ReviewList() {
 
   const columns = [
     { headerName: "Sr.No.", field: "id", type: "index" },
-    { headerName: "User", field: "user", jsonField: "user.email", type: "text" },
+    { headerName: "User", field: "user", type: "text", render: (rowData) => `${rowData.user.firstName} ${rowData.user.lastName}`,},
     { headerName: "Product", field: "product", jsonField: "product.name", type: "text" },
-    { headerName: "Rating", field: "rating", type: "text" },
+    { headerName: "Rating", field: "rating", type: "rating", className:"min-w-40"},
     { headerName: "Review", field: "reviewText", type: "longText" },
     { headerName: "Date", field: "reviewDate", type: "date" },
     {
@@ -99,6 +101,10 @@ function ReviewList() {
       {isModelOpen && (
           <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
         )}
+
+        {isInfoModelOpen && (
+          <InfoModal setIsModelOpen={setIsInfoModelOpen} data={selectedReview} />
+        )}
         <TableView
           tableData={tableData}
           columns={columns}
@@ -106,7 +112,8 @@ function ReviewList() {
           currentPage={currentPage}
           pageSize={pageSize}
           handleView={(row) => {
-            console.log(row);
+            setSelectedReview(row);
+            setIsInfoModelOpen(true);
           }}
           handleDelete={(row) => {
             setSelectedReview(row);

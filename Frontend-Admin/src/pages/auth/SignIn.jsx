@@ -51,6 +51,7 @@ export default function SignIn() {
         }
       );
       if (response.data) {
+        notify("Login successful.", "success");
         localStorage.setItem("auth_token", response.data.jwtToken);
         localStorage.setItem("refresh_token", response.data.refreshToken);
         setUserData({ email: "", password: "" });

@@ -1,4 +1,5 @@
 import React from "react";
+import ReactStars from "react-rating-stars-component";
 
 const TableView = ({
   tableData,
@@ -35,6 +36,10 @@ const TableView = ({
       ? getNestedValue(row, column.jsonField)
       : row[column.field];
 
+    if (column.render) {
+      return column.render(row);
+    }
+
     switch (column.type) {
       case "index":
         return (
@@ -57,6 +62,20 @@ const TableView = ({
         return <p>{value}</p>;
       case "date":
         return <p className="text-sm">{formatDateTime(value)}</p>;
+      case "rating":
+        return (
+          <p>
+            <ReactStars
+              count={5}
+              value={value}
+              edit={false}
+              size={24}
+              isHalf={true}
+              activeColor="#ffd700"
+              color="#8a8a8a"
+            />
+          </p>
+        );
       case "actions":
         return (
           <div className="flex gap-2">
@@ -102,6 +121,9 @@ const TableView = ({
       ? getNestedValue(row, column.jsonField)
       : row[column.field];
 
+    if (column.render) {
+      return column.render(row);
+    }
     switch (column.type) {
       case "index":
         return <p> {index + 1 + (currentPage - 1) * pageSize}</p>;
@@ -115,6 +137,20 @@ const TableView = ({
         return <p>{value}</p>;
       case "date":
         return <p>{formatDateTime(value)}</p>;
+      case "rating":
+        return (
+          <p>
+            <ReactStars
+              count={5}
+              value={value}
+              edit={false}
+              size={24}
+              isHalf={true}
+              activeColor="#ffd700"
+              color="#8a8a8a"
+            />
+          </p>
+        );
       default:
         return <p>{value}</p>;
     }
@@ -124,7 +160,7 @@ const TableView = ({
     <>
       {/* Header for both views */}
       <div className="card-header flex items-center justify-between p-4 border-b">
-      <h4 className="card-title">{tableData.name}</h4>
+        <h4 className="card-title">{tableData.name}</h4>
         {headerJsx && headerJsx}
       </div>
 

@@ -6,6 +6,7 @@ import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 import TableView from "../../components/TableView";
 import Model from "../../components/Model";
+import InfoModal from "../../components/InfoModal";
 
 function ViewUser() {
   const { userId } = useParams();
@@ -22,6 +23,7 @@ function ViewUser() {
   const [currentInvoicePage, setCurrentInvoicePage] = useState(1);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [isInfoModelOpen, setIsInfoModelOpen ] = useState(false);
   const reviewPageSize = 10;
   const invoicePageSize = 10;
 
@@ -147,9 +149,9 @@ function ViewUser() {
 
   const reviewColumns = [
     { headerName: "Sr.No.", field: "id", type: "index" },
-    { headerName: "User", field: "user", jsonField: "user.email", type: "text" },
+    { headerName: "User", field: "user", type: "text", render: (rowData) => `${rowData.user.firstName} ${rowData.user.lastName}`,},
     { headerName: "Product", field: "product", jsonField: "product.name", type: "text" },
-    { headerName: "Rating", field: "rating", type: "text" },
+    { headerName: "Rating", field: "rating", type: "rating", className:"min-w-40"},
     { headerName: "Review", field: "reviewText", type: "longText" },
     { headerName: "Date", field: "reviewDate", type: "date" },
     { 
@@ -193,7 +195,7 @@ function ViewUser() {
                 {/* show user details */}
                 <div className="flex flex-col justify-center items-center">
                   <img
-                    className="w-24 h-24 object-cover  border-2 border-gray-700 rounded-full mr-4"
+                    className="w-24 h-24 object-cover border-2 border-gray-700 rounded-full mr-4"
                     src={user.profileImageUrl}
                     alt="Profile"
                   />
@@ -210,6 +212,11 @@ function ViewUser() {
         {isModelOpen && (
           <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
         )}
+
+        {isInfoModelOpen && (
+          <InfoModal setIsModelOpen={setIsInfoModelOpen} data={selectedReview} />
+        )}
+
         <TableView
           tableData={reviewTableData}
           columns={reviewColumns}
@@ -217,7 +224,8 @@ function ViewUser() {
           currentPage={currentReviewPage}
           pageSize={reviewPageSize}
           handleView={(row) => {
-            console.log(row);
+            setSelectedReview(row);
+            setIsInfoModelOpen(true);
           }}
           handleDelete={(row) => {
             setSelectedReview(row);
