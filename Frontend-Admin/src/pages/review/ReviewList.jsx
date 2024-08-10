@@ -4,13 +4,16 @@ import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 import TableView from "../../components/TableView";
+import Model from "../../components/Model";
 
 function ReviewList() {
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const[isModelOpen, setIsModelOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
   const pageSize = 10;
 
   useEffect(() => {
@@ -44,17 +47,43 @@ function ReviewList() {
     setCurrentPage(pageNumber);
   };
 
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.delete(
+        `/api/reviews/${selectedReview.id}`
+      );
+      if (response.status === 204) {
+        notify("Review deleted successfully", "success");
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setSelectedReview(null);
+    setIsModelOpen(false);
+    setIsLoading(false);
+  };
+
   const tableData = {
     name: "Review List",
   };
 
   const columns = [
     { headerName: "Sr.No.", field: "id", type: "index" },
-    { headerName: "User", field: "user", type: "text" },
-    { headerName: "Product", field: "product", type: "text" },
+    { headerName: "User", field: "user", jsonField: "user.email", type: "text" },
+    { headerName: "Product", field: "product", jsonField: "product.name", type: "text" },
     { headerName: "Rating", field: "rating", type: "text" },
-    { headerName: "Comment", field: "comment", type: "longText" },
-    { headerName: "Date", field: "date", type: "date" },
+    { headerName: "Review", field: "reviewText", type: "longText" },
+    { headerName: "Date", field: "reviewDate", type: "date" },
     {
       headerName: "Action",
       field: "actions",
@@ -67,6 +96,9 @@ function ReviewList() {
   return (
     <>
       <div className="card bg-white overflow-hidden">
+      {isModelOpen && (
+          <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
+        )}
         <TableView
           tableData={tableData}
           columns={columns}
@@ -77,7 +109,8 @@ function ReviewList() {
             console.log(row);
           }}
           handleDelete={(row) => {
-            console.log(row);
+            setSelectedReview(row);
+            setIsModelOpen(true);
           }}
         />
         <div className="flex justify-center">

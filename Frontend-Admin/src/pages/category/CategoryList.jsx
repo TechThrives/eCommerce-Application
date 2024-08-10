@@ -5,14 +5,17 @@ import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 import TableView from "../../components/TableView";
+import Model from "../../components/Model";
 
 function CategoryList() {
   const navigate = useNavigate();
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [isModelOpen, setIsModelOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const pageSize = 10;
 
   useEffect(() => {
@@ -46,6 +49,32 @@ function CategoryList() {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.delete(
+        `/api/categories/${selectedCategory.id}`
+      );
+      if (response.status === 204) {
+        notify("Category deleted successfully", "success");
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setSelectedCategory(null);
+    setIsModelOpen(false);
+    setIsLoading(false);
   };
 
   const tableData = {
@@ -85,6 +114,11 @@ function CategoryList() {
   return (
     <>
       <div className="card bg-white overflow-hidden">
+
+      {isModelOpen && (
+          <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
+        )}
+
       <TableView
           tableData={tableData}
           columns={columns}
@@ -93,7 +127,8 @@ function CategoryList() {
           pageSize={pageSize}
           handleEdit={(row) => navigate(`/edit-category/${row.id}`)}
           handleDelete={(row) => {
-            console.log(row);
+            setSelectedCategory(row);
+            setIsModelOpen(true);
           }}
           headerJsx={<button
             className="btn bg-primary text-white rounded-full"

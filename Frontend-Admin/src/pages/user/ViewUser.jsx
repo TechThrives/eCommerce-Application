@@ -5,11 +5,12 @@ import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import Pagination from "../../components/Pagination";
 import TableView from "../../components/TableView";
+import Model from "../../components/Model";
 
 function ViewUser() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { setAppData } = useAppContext();
+  const { setAppData, setIsLoading } = useAppContext();
   const [reviews, setReviews] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [user, setUser] = useState(null);
@@ -19,6 +20,8 @@ function ViewUser() {
   const [totalInvoiceElements, setTotalInvoiceElements] = useState(0);
   const [currentReviewPage, setCurrentReviewPage] = useState(1);
   const [currentInvoicePage, setCurrentInvoicePage] = useState(1);
+  const [isModelOpen, setIsModelOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
   const reviewPageSize = 10;
   const invoicePageSize = 10;
 
@@ -112,17 +115,43 @@ function ViewUser() {
     setCurrentInvoicePage(pageNumber);
   };
 
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.delete(
+        `/api/reviews/${selectedReview.id}`
+      );
+      if (response.status === 204) {
+        notify("Review deleted successfully", "success");
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setSelectedReview(null);
+    setIsModelOpen(false);
+    setIsLoading(false);
+  };
+
   const reviewTableData = {
     name: "Review List",
   };
 
   const reviewColumns = [
     { headerName: "Sr.No.", field: "id", type: "index" },
-    { headerName: "User", field: "user", type: "text" },
-    { headerName: "Product", field: "product", type: "text" },
+    { headerName: "User", field: "user", jsonField: "user.email", type: "text" },
+    { headerName: "Product", field: "product", jsonField: "product.name", type: "text" },
     { headerName: "Rating", field: "rating", type: "text" },
-    { headerName: "Comment", field: "comment", type: "longText" },
-    { headerName: "Date", field: "date", type: "date" },
+    { headerName: "Review", field: "reviewText", type: "longText" },
+    { headerName: "Date", field: "reviewDate", type: "date" },
     { 
       headerName: "Action", 
       field: "actions", 
@@ -178,6 +207,9 @@ function ViewUser() {
         )}
 
         <div>
+        {isModelOpen && (
+          <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
+        )}
         <TableView
           tableData={reviewTableData}
           columns={reviewColumns}
@@ -188,7 +220,8 @@ function ViewUser() {
             console.log(row);
           }}
           handleDelete={(row) => {
-            console.log(row);
+            setSelectedReview(row);
+            setIsModelOpen(true);
           }}
         />
           <div className="flex justify-center">
