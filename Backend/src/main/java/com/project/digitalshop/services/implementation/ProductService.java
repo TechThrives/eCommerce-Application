@@ -19,10 +19,12 @@ import com.project.digitalshop.dto.product.ProductUpdateDTO;
 import com.project.digitalshop.exception.NotFoundException;
 import com.project.digitalshop.model.Cart;
 import com.project.digitalshop.model.Category;
+import com.project.digitalshop.model.Invoice;
 import com.project.digitalshop.model.Product;
 import com.project.digitalshop.model.Wishlist;
 import com.project.digitalshop.repository.CartRepository;
 import com.project.digitalshop.repository.CategoryRepository;
+import com.project.digitalshop.repository.InvoiceRepository;
 import com.project.digitalshop.repository.ProductRepository;
 import com.project.digitalshop.repository.WishlistRepository;
 import com.project.digitalshop.repository.specification.ProductSpecification;
@@ -39,14 +41,16 @@ public class ProductService implements IProductService {
     private final CategoryRepository categoryRepository;
     private final CartRepository cartRepository;
     private final WishlistRepository wishlistRepository;
+    private final InvoiceRepository invoiceRepository;
     private final CloudinaryService cloudinaryService;
 
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
-            CartRepository cartRepository, WishlistRepository wishlistRepository, CloudinaryService cloudinaryService) {
+            CartRepository cartRepository, WishlistRepository wishlistRepository, InvoiceRepository invoiceRepository, CloudinaryService cloudinaryService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.cartRepository = cartRepository;
         this.wishlistRepository = wishlistRepository;
+        this.invoiceRepository = invoiceRepository;
         this.cloudinaryService = cloudinaryService;
     }
 
@@ -134,6 +138,13 @@ public class ProductService implements IProductService {
         carts.forEach(cart -> {
             cart.getProducts().removeIf(p -> p.getId().equals(productId));
             cartRepository.save(cart); // Save the updated cart
+        });
+
+        // Get all invoices that contain the product
+        List<Invoice> invoices = invoiceRepository.findByProductsContains(product);
+        invoices.forEach(invoice -> {
+            invoice.getProducts().removeIf(p -> p.getId().equals(productId));
+            invoiceRepository.save(invoice); // Save the updated invoice
         });
 
         List<String> existingImageUrls = product.getImageUrls();

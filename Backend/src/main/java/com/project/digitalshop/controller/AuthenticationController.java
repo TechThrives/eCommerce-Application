@@ -16,13 +16,11 @@ import com.project.digitalshop.dto.authentication.SignInResponse;
 import com.project.digitalshop.dto.authentication.SignUpRequest;
 import com.project.digitalshop.services.interfaces.IAuthenticationService;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @Validated
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication", description = "Authentication Controller")
 public class AuthenticationController {
     private final IAuthenticationService authService;
 
