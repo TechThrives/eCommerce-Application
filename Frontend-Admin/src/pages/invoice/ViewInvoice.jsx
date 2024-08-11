@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axiosConfig from "../../utils/axiosConfig";
 import { useAppContext } from "../../utils/AppContext";
+import { notify } from "../../utils/Helper";
 
 function ViewInvoice() {
   const { invoiceId } = useParams();
@@ -11,46 +13,25 @@ function ViewInvoice() {
 
   useEffect(() => {
     const fetchInvoice = async () => {
-      const url = `https://api.example.com/invoices/${invoiceId}`;
       try {
-        const data = {
-          id: "123e4567-e89b-12d3-a456-426614174000",
-          user: {
-            id: "123e4567-e89b-12d3-a456-426614174000",
-            firstName: "John",
-            lastName: "Doe",
-            email: "nLQp6@example.com",
-            phone: "123-456-7890",
-          },
-          products: [
-            {
-              id: "123e4567-e89b-12d3-a456-426614174001",
-              name: "Product A",
-              price: 29.99,
-              quantity: 2,
-            },
-            {
-              id: "123e4567-e89b-12d3-a456-426614174002",
-              name: "Product B",
-              price: 49.99,
-              quantity: 1,
-            },
-          ],
-          createdOn: "2024-07-08T12:00:00",
-          subTotal: 109.97,
-          tax: 8.0,
-          totalPrice: 117.97,
-          paymentMethod: "Credit Card",
-          paymentStatus: "Paid",
-        };
-        setInvoice(data);
+        const response = await axiosConfig.get(`/api/invoices/${invoiceId}`);
+        if (response.data) {
+          setInvoice(response.data);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+            navigate("/invoice-list");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
       }
     };
-    
     fetchInvoice();
-    setAppData((prev) => ({ ...prev, header: "View Invoice" }));
+    setAppData((prev) => ({ ...prev, header: "Invoice Details" }));
   }, [invoiceId]);
 
   const printDiv = (divId) => {
@@ -110,7 +91,7 @@ function ViewInvoice() {
             </div>
 
             <div className="text-end">
-              <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">
+              <h2 className="text-2xl font-semibold text-gray-800">
                 Invoice #
               </h2>
               <span className="mt-1 block text-gray-500">
@@ -130,26 +111,28 @@ function ViewInvoice() {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">Bill to:</h3>
-              <h3 className="text-lg font-semibold text-gray-800">
+          <div class="mt-4 grid grid-cols-12 gap-3">
+            <div class="col-span-5">
+              <h3 class="text-lg font-semibold text-gray-800">Bill to:</h3>
+              <h3 class="text-md font-medium text-gray-800">
                 {invoice.user.firstName} {invoice.user.lastName}
               </h3>
-              <address className="mt-2 not-italic text-gray-500">
+              <address class="mt-1 not-italic text-gray-500">
                 {invoice.user.email}
                 <br />
                 {invoice.user.phone}
-                <br />
+                <br />{" "}
               </address>
             </div>
 
-            <div className="col-start-3">
-              <table className="w-full text-end">
+            <div class="col-span-2"></div>
+
+            <div class="col-span-5 text-end">
+              <table class="w-full">
                 <tbody>
                   <tr>
-                    <td className="py-1 font-medium">Invoice Date:</td>
-                    <td className="py-1 font-medium">
+                    <td class="py-1 font-medium">Invoice Date:</td>
+                    <td class="py-1 font-medium">
                       {new Date(invoice.createdOn).toLocaleString("en-US", {
                         year: "numeric",
                         month: "2-digit",
@@ -231,11 +214,15 @@ function ViewInvoice() {
                   <tbody>
                     <tr>
                       <td className="py-1 font-medium">Payment Method:</td>
-                      <td className="py-1 font-medium">{invoice.paymentMethod}</td>
+                      <td className="py-1 font-medium">
+                        {invoice.paymentMethod}
+                      </td>
                     </tr>
                     <tr>
                       <td className="py-1 font-medium">Payment Status:</td>
-                      <td className="py-1 font-medium">{invoice.paymentStatus}</td>
+                      <td className="py-1 font-medium">
+                        {invoice.paymentStatus}
+                      </td>
                     </tr>
                     <tr>
                       <td className="py-1 font-medium">Subtotal:</td>

@@ -169,11 +169,11 @@ function ViewUser() {
 
   const invoiceColumns = [
     { headerName: "Sr.No.", field: "id", type: "index" },
-    { headerName: "User ID", field: "userId", type: "text" },
-    { headerName: "Products", field: "products", type: "text" },
+    { headerName: "User", field: "user", type: "text", render: (rowData) => `${rowData.user.firstName} ${rowData.user.lastName}`,},
+    { headerName: "Products", field: "products", type: "text", render: (rowData) => `${rowData.products.length}`,},
     { headerName: "Total Price", field: "totalPrice", type: "price" },
     { headerName: "Payment Method", field: "paymentMethod", type: "text" },
-    { headerName: "Payment Status", field: "paymentStatus", type: "text" },
+    { headerName: "Payment Status", field: "paymentStatus", type: "status" },
     { 
       headerName: "Action", 
       field: "actions", 

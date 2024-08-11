@@ -27,6 +27,37 @@ const TableView = ({
     return text;
   };
 
+  const renderPaymentStatus = (status) => {
+    switch (status) {
+      case "PENDING":
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60">
+            <i className="uil uil-clock"></i>
+            <h2 className="text-sm font-normal">Pending</h2>
+          </div>
+        );
+      case "SUCCESS":
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60">
+            <i className="uil uil-check-circle"></i>
+            <h2 className="text-sm font-normal">Paid</h2>
+          </div>
+        );
+      case "FAILED":
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-red-500 bg-red-100/60">
+            <i className="uil uil-times-circle"></i>
+            <h2 className="text-sm font-normal">Failed</h2>
+          </div>
+        );
+      default:
+        return <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-gray-500 bg-gray-100/60">
+        <i className="uil uil-exclamation-circle"></i>
+        <h2 className="text-sm font-normal">{status}</h2>
+      </div>;
+    }
+  };
+
   const getNestedValue = (object, path) => {
     return path.split(".").reduce((o, p) => (o ? o[p] : ""), object);
   };
@@ -59,7 +90,7 @@ const TableView = ({
       case "price":
         return <span className="font-bold">&#8377;{value}</span>;
       case "status":
-        return <p>{value}</p>;
+        return renderPaymentStatus(value);
       case "date":
         return <p className="text-sm">{formatDateTime(value)}</p>;
       case "rating":
@@ -133,8 +164,8 @@ const TableView = ({
         return <p title={value}>{truncateText(value, 30)}</p>;
       case "price":
         return <p className="font-bold">&#8377;{value}</p>;
-      case "status":
-        return <p>{value}</p>;
+        case "status":
+          return renderPaymentStatus(value);
       case "date":
         return <p>{formatDateTime(value)}</p>;
       case "rating":
