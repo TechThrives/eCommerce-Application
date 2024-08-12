@@ -43,7 +43,7 @@ export default function HeroBanner() {
           <div key={index}>
             <img
               src={slide.src}
-              className="aspect-[16/10] md:aspect-auto object-cover"
+              className="h-[350px] max-h-[350px] aspect-[16/10] md:aspect-auto object-cover"
               alt={slide.alt}
             />
             <div className="px-[10px] md:px-[15px] py-[10px] md:py-[15px] font-oswald bg-white absolute bottom-[25px] md:bottom-[75px] left-0 text-black/[0.9] text-[15px] md:text-[20px] uppercase font-medium cursor-pointer hover:opacity-90">

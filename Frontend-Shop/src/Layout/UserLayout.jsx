@@ -39,7 +39,7 @@ export default function UserLayout() {
     <>
       <div className="w-full py-2 relative">
         <Wrapper>
-          <div className="mx-4 my-2 container relative">
+          <div className="mx-4 my-2 relative">
             <div className="grid grid-cols-1">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl leading-normal font-semibold">
