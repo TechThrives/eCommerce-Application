@@ -85,6 +85,13 @@ export default function UserLayout() {
             </div>
           </div>
 
+          {showMenu && (
+            <div
+              className="fixed inset-0 bg-black opacity-40 z-10"
+              onClick={() => setShowMenu(false)}
+            ></div>
+          )}
+
           <div
             className={`absolute z-[15] top-0 left-0 w-72 h-full bg-white text-black ${
               showMenu ? "block" : "hidden"
@@ -94,7 +101,7 @@ export default function UserLayout() {
               <div className="flex w-full justify-between">
                 <h5 className="text-xl font-medium">Menus</h5>
                 <MdClose
-                  className="mr-4 text-lg cursor-pointer hover:bg-gray-300"
+                  className="mr-1 text-lg cursor-pointer hover:bg-gray-300"
                   onClick={() => setShowMenu(false)}
                 />
               </div>
