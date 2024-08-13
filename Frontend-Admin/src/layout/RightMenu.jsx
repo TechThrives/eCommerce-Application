@@ -1,26 +1,36 @@
 import React from "react";
 import { useAppContext } from "../utils/AppContext";
 import { useNavigate } from "react-router-dom";
+import { notify } from "../utils/Helper";
 import axiosConfig from "../utils/axiosConfig";
 import { handleFullScreenClick } from "../script";
 
 export default function RightMenu() {
-  const { setUser } = useAppContext();
+  const { setUser, setIsLoading } = useAppContext();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
+    setIsLoading(true);
     try {
-      const response = await axiosConfig.get(
-        `/api/auth/sign-out`
-      );
-      
+      const response = await axiosConfig.get(`/api/auth/sign-out`);
+      if (response) {
+        notify("Sign out successful.", "success");
         setUser(null);
         localStorage.removeItem("auth_token");
         localStorage.removeItem("refresh_token");
         navigate("/sign-in");
+      }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
     }
+    setIsLoading(false);
   };
 
   return (

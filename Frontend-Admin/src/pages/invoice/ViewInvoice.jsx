@@ -9,7 +9,6 @@ function ViewInvoice() {
   const navigate = useNavigate();
   const { setAppData } = useAppContext();
   const [invoice, setInvoice] = useState({ user: {}, products: [] });
-  const pageSize = 10; // Assuming page size
 
   useEffect(() => {
     const fetchInvoice = async () => {

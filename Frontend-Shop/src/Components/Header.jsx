@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useWishListContext } from "../Features/WishListContext";
 import Wrapper from "./Wrapper";
+import axiosConfig from "../Utils/axiosConfig";
+import { notify } from "../Utils/Helper";
 
 import Menu from "./Menu";
 import MenuMobile from "./MenuMobile";
@@ -46,18 +48,25 @@ export default function Header() {
   }, [controlNavbar]);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosConfig.get(`/api/categories/all`);
+        if (response.data) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
+      }
+    };
     fetchCategories();
   }, []);
-
-  const fetchCategories = async () => {
-    const data = [
-      { id: 1, name: "Jordan", product_count: 11 },
-      { id: 2, name: "Sneakers", product_count: 8 },
-      { id: 3, name: "Running shoes", product_count: 64 },
-      { id: 4, name: "Football shoes", product_count: 107 },
-    ];
-    setCategories(data);
-  };
 
   return (
     <header

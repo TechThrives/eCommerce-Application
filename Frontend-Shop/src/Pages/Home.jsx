@@ -4,99 +4,32 @@ import Wrapper from "../Components/Wrapper";
 import ProductCard from "../Components/ProductCard";
 import HeroBanner from "../Components/HeroBanner";
 import { MdArrowForward } from "react-icons/md";
+import { notify } from "../Utils/Helper";
+import axiosConfig from "../Utils/axiosConfig";
 
 export default function Home() {
-  const [topProducts, setTopProducts] = useState([]);
-  const fetchTopTenProducts = async () => {
-    const data = [
-      {
-        id: "1",
-        name: "Gaming Laptop",
-        shortDescription: "Powerful gaming laptop",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "2",
-        name: "Mechanical Keyboard Mechanical Keyboard Customizable RGB keyboard RGB keyboard RGB keyboard RRGB keyboardRGB keyboardRGB keyCustomizable RGB keyboard RGB keyboard RGB keyboard RRGB keyboardRGB keyboardRGB keyCustomizable RGB keyboard RGB keyboard RGB keyboard RRGB keyboardRGB keyboardRGB key",
-        shortDescription:
-          "Customizable RGB keyboard RGB keyboard RGB keyboard R RGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboard RGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardRGB keyboardGB keyboard RGB keyboard RGB keyboard",
-        image: "https://placehold.co/500x500.png",
-        price: 10000000000000000000,
-        original_price: 15000000000000000000,
-      },
-      {
-        id: "3",
-        name: "Wireless Mouse",
-        shortDescription: "Ergonomic wireless mouse",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "4",
-        name: "Gaming Monitor",
-        shortDescription: "High refresh rate gaming monitor",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "5",
-        name: "Graphics Card",
-        shortDescription: "Powerful graphics card for gaming",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "6",
-        name: "CPU Cooler",
-        shortDescription: "Liquid cooling CPU cooler",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "7",
-        name: "Gaming Headset",
-        shortDescription: "Immersive gaming headset with surround sound",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "8",
-        name: "Gaming Chair",
-        shortDescription: "Ergonomic gaming chair with lumbar support",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "9",
-        name: "SSD Drive",
-        shortDescription: "High-speed SSD storage drive",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-      {
-        id: "10",
-        name: "Gaming Router",
-        shortDescription: "High-performance gaming router",
-        image: "https://placehold.co/500x500.png",
-        price: 1000,
-        original_price: 1500,
-      },
-    ];
-
-    setTopProducts(data);
-  };
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetchTopTenProducts();
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosConfig.get(`/api/products/top/10`);
+        if (response.data) {
+          setProducts(response.data);
+        }
+      } catch (error) {
+        if (error.response) {
+          const { data } = error.response;
+          if (data.details && Array.isArray(data.details) && data.message) {
+            notify(data.message || "An unexpected error occurred.", "error");
+          }
+        } else {
+          notify("An unexpected error occurred.", "error");
+        }
+      }
+    };
+
+    fetchProducts();
   }, []);
   return (
     <>
@@ -125,7 +58,7 @@ export default function Home() {
         </div>
         {/* products grid start */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-5 my-14 px-5 md:px-0">
-          {topProducts.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -152,7 +85,7 @@ export default function Home() {
         </div>
         {/* products grid start */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-5 my-14 px-5 md:px-0">
-          {topProducts.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

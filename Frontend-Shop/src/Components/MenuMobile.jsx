@@ -35,7 +35,7 @@ const MenuMobile = ({
                       return (
                         <Link
                           key={c.id}
-                          to={`/category/${c.id}`}
+                          to={`/category/${c.slug}`}
                           onClick={() => {
                             setShowCatMenu(false);
                             setMobileMenu(false);
@@ -44,7 +44,7 @@ const MenuMobile = ({
                           <li className="py-4 px-8 border-t flex justify-between">
                             {c.name}
                             <span className="opacity-50 text-sm">
-                              {c.product_count}
+                              {c.productCount}
                             </span>
                           </li>
                         </Link>

@@ -44,7 +44,7 @@ const ProductListCard = ({ product }) => {
           <div className="relative overflow-hidden shrink-0 shadow group-hover:shadow-lg rounded-md duration-500">
             <img
               className="h-full object-cover w-48 rounded-md group-hover:scale-110 duration-500"
-              src={product.image}
+              src={product.imageUrls[0]}
               alt={product.name}
             />
             <ul className="list-none absolute top-[4px] end-1 duration-500 space-y-1">
@@ -72,13 +72,13 @@ const ProductListCard = ({ product }) => {
             </p>
             <p className="text-xs md:text-sm font-semibold text-black">
               <span className=" text-black/[0.7] line-through">
-                &#8377;{product.original_price}
+                &#8377;{product.originalPrice}
               </span>{" "}
               &#8377;{product.price}
             </p>
             <p className="text-xs md:text-sm mt-1 font-medium text-green-500">
               {getDiscountedPricePercentage(
-                product.original_price,
+                product.originalPrice,
                 product.price
               )}
               % off

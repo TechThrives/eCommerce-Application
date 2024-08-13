@@ -29,13 +29,13 @@ const Menu = ({ showCatMenu, setShowCatMenu, categories }) => {
                       return (
                         <Link
                           key={c.id}
-                          to={`/category/${c.id}`}
+                          to={`/category/${c.slug}`}
                           onClick={() => setShowCatMenu(false)}
                         >
                           <li className="h-12 flex justify-between items-center px-3 hover:bg-black/[0.03] rounded-md">
                             {c.name}
                             <span className="opacity-50 text-sm">
-                              {c.product_count}
+                              {c.productCount}
                             </span>
                           </li>
                         </Link>

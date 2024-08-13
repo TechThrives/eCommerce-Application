@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { notify } from "../../utils/Helper";
 import { useAppContext } from "../../utils/AppContext";
 import { useNavigate, Navigate } from "react-router-dom";
@@ -51,7 +50,7 @@ export default function SignIn() {
         }
       );
       if (response.data) {
-        notify("Login successful.", "success");
+        notify("Sign in successful.", "success");
         localStorage.setItem("auth_token", response.data.jwtToken);
         localStorage.setItem("refresh_token", response.data.refreshToken);
         setUserData({ email: "", password: "" });
