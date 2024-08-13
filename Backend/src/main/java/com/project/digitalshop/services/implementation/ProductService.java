@@ -2,7 +2,9 @@ package com.project.digitalshop.services.implementation;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -288,5 +290,33 @@ public class ProductService implements IProductService {
             productResponseDTO.setCategory(categoryDTO);
             return productResponseDTO;
         });
+    }
+    
+    @Override
+    public List<ProductResponseDTO> getTopProducts(int count) {
+        Pageable pageRequest = PageRequest.of(0, count, Sort.by(Sort.Order.desc("avgRating")));
+        
+        Page<Product> productsPage = productRepository.findAll(pageRequest);
+        
+        // Map Page<Product> to Page<ProductResponseDTO>
+        return productsPage.map(product -> {
+            ProductResponseDTO productResponseDTO = new ProductResponseDTO();
+            BeanUtils.copyProperties(product, productResponseDTO);
+
+            // Map Category to CategoryProductDTO
+            CategoryProductDTO categoryDTO = new CategoryProductDTO();
+            BeanUtils.copyProperties(product.getCategory(), categoryDTO);
+            productResponseDTO.setCategory(categoryDTO);
+
+            return productResponseDTO;
+        }).getContent(); // Return the list of ProductResponseDTO
+    }
+
+    @Override
+    public List<String> getTagSuggestions(String input) {
+        Set<String> allTags = productRepository.findAllTags();
+        return allTags.stream()
+                      .filter(tag -> tag.toLowerCase().contains(input.toLowerCase()))
+                      .collect(Collectors.toList());
     }
 }

@@ -2,6 +2,7 @@ package com.project.digitalshop.services.interfaces;
 
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.digitalshop.dto.product.ProductDTO;
 import com.project.digitalshop.dto.product.ProductResponseDTO;
@@ -33,4 +34,8 @@ public interface IProductService {
 
         Page<ProductResponseDTO> getAllProductsByCategorySlug(String categorySlug, String searchVal, List<String> tags,
                         BigDecimal minPrice, BigDecimal maxPrice, String sortBy, int pageNo, int pageSize);
+
+        List<ProductResponseDTO> getTopProducts(int count);
+
+        List<String> getTagSuggestions(String input);
 }

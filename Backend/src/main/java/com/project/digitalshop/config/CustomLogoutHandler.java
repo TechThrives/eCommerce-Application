@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Optional;
 
 @Configuration
@@ -48,9 +49,13 @@ public class CustomLogoutHandler implements LogoutHandler {
             }
 
             MessageResponse messageResponse = new MessageResponse("Logout Successfully!!!");
+            response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpStatus.OK.value());
-            response.setContentType("application/json");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(messageResponse));
+            PrintWriter writer = response.getWriter();
+            writer.write(new ObjectMapper().writeValueAsString(messageResponse));
+            writer.flush();
+            writer.close();
+
         } catch (IOException ex) {
             throw new RuntimeException("Failed to write response: " + ex.getMessage());
         }

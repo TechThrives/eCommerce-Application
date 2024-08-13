@@ -83,6 +83,12 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productsPage);
     }
 
+    @GetMapping("/top/{count}")
+    public ResponseEntity<List<ProductResponseDTO>> getTopProducts(@PathVariable int count) {
+        List<ProductResponseDTO> products = productService.getTopProducts(count);
+        return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Page<ProductResponseDTO>> getAllProductsByCategoryId(
             @PathVariable UUID categoryId,
@@ -118,5 +124,11 @@ public class ProductController {
                 sortBy,
                 pageNo, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(productsPage);
+    }
+
+    @GetMapping("/tags/suggestions")
+    public ResponseEntity<List<String>> getTagSuggestions(@RequestParam String input) {
+        List<String> suggestions = productService.getTagSuggestions(input);
+        return ResponseEntity.ok(suggestions);
     }
 }

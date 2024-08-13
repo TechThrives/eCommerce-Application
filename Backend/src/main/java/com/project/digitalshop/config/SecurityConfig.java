@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -50,6 +51,12 @@ public class SecurityConfig {
                                                                 "/swagger-ui.html", "/actuator/**")
                                                 .permitAll()
                                                 .requestMatchers("/", "/api/auth/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/products/category/slug/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/products/tags/suggestions/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/products/top/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
+                                                .requestMatchers(HttpMethod.GET, "/api/categories/all").permitAll()
                                                 .anyRequest().authenticated())
                                 .userDetailsService(userDetailsService)
                                 .sessionManagement(session -> session

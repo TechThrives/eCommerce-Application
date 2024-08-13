@@ -1,5 +1,6 @@
 package com.project.digitalshop.services.implementation;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -49,9 +50,10 @@ public class ReviewService implements IReviewService {
         review.setProduct(product);
         review.setReviewText(reviewDTO.getReviewText());
         review.setRating(reviewDTO.getRating());
-
         review = reviewRepository.save(review);
         product.incrementReviewCount();
+        float avgRating = calculateAverageRating(product);
+        product.setAvgRating(avgRating);
         product = productRepository.save(product);
 
         ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO();
@@ -74,6 +76,9 @@ public class ReviewService implements IReviewService {
         existingReview.setRating(reviewUpdateDTO.getRating());
 
         reviewRepository.save(existingReview);
+        Product product = existingReview.getProduct();
+        float avgRating = calculateAverageRating(product);
+        product.setAvgRating(avgRating);
 
         ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO();
         BeanUtils.copyProperties(existingReview, reviewResponseDTO, "product", "user");
@@ -97,6 +102,8 @@ public class ReviewService implements IReviewService {
 
         Product product = review.getProduct();
         product.decrementReviewCount();
+        float avgRating = calculateAverageRating(product);
+        product.setAvgRating(avgRating);
         productRepository.save(product);
 
         reviewRepository.deleteById(reviewId);
@@ -176,4 +183,16 @@ public class ReviewService implements IReviewService {
             return reviewResponseDTO;
         });
     }
+
+    public float calculateAverageRating(Product product) {
+        List<Review> reviews = product.getReviews();
+        if (reviews.isEmpty()) {
+            return 0;
+        }
+        return (float) reviews.stream()
+                      .mapToDouble(Review::getRating)
+                      .average()
+                      .orElse(0);
+    }
+
 }
