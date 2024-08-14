@@ -23,6 +23,7 @@ import NotFound from "./Pages/NotFound";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import { ToastContainer } from "react-toastify";
+import ProductReviews from "./Pages/ProductReviews";
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/category/:categorySlug" element={<Category />} />
                 <Route path="/product/:productSlug" element={<ProductDetails />} />
+                <Route path="/product-review" element={<ProductReviews />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

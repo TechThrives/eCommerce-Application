@@ -34,6 +34,7 @@ export default function Home() {
     setIsLoading(true);
     fetchProducts();
   }, []);
+
   return (
     <>
       <Wrapper>

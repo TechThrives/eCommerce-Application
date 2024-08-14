@@ -7,7 +7,6 @@ import { useWishListContext } from "../Features/WishListContext";
 import Wrapper from "../Components/Wrapper";
 import RelatedProductCard from "../Components/RelatedProductCard";
 import ProductDetailsCarousel from "../Components/ProductDetailsCarousel";
-import Logo from "../Components/Images/logo.svg";
 import {
   IoIosCheckmarkCircle,
   IoMdStar,
@@ -81,7 +80,6 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     const fetchReviews = async (productId) => {
       try {
         const response = await axiosConfig.get(
@@ -143,7 +141,7 @@ const ProductDetails = () => {
       }
       setIsLoading(false);
     };
-
+    setIsLoading(true);
     setActiveTab(1);
     fetchProduct();
   }, [productSlug]);
