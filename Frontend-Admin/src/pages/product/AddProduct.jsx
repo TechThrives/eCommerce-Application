@@ -105,7 +105,8 @@ function AddProduct() {
       notify("Product original price is required", "error");
       return;
     }
-    if (product.price < 0 || product.price > product.originalPrice) {
+   
+    if (parseInt(product.price) < 0 || parseInt(product.price) > parseInt(product.originalPrice)) {
       notify("Product price must be between 0 and original price", "error");
       return;
     }

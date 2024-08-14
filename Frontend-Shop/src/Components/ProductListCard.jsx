@@ -38,12 +38,12 @@ const ProductListCard = ({ product }) => {
   };
 
   return (
-    <Link to={`/product/${product.id}`} className="overflow-hidden">
+    <Link to={`/product/${product.slug}`} className="overflow-hidden">
       <div className="group relative duration-500 w-full mx-auto">
         <div className="flex items-center">
           <div className="relative overflow-hidden shrink-0 shadow group-hover:shadow-lg rounded-md duration-500">
             <img
-              className="h-full object-cover w-48 rounded-md group-hover:scale-110 duration-500"
+              className="h-48 object-cover w-48 rounded-md group-hover:scale-110 duration-500"
               src={product.imageUrls[0]}
               alt={product.name}
             />

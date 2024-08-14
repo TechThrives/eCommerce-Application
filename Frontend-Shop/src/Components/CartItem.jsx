@@ -39,7 +39,7 @@ const CartItem = ({ item }) => {
             </div>
             <div className="flex items-center md:flex-col">
               <div className="text-xs md:text-sm font-bold text-green-500 mt-2">
-                {getDiscountedPricePercentage(item.original_price, item.price)}%
+                {getDiscountedPricePercentage(item.originalPrice, item.price)}%
                 off
               </div>
             </div>

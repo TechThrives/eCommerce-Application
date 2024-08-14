@@ -36,7 +36,6 @@ export default function Category() {
   // Debounced fetch function
   const fetchProducts = useCallback(
     debounce(async () => {
-      setIsLoading(true);
       try {
         const queryParams = new URLSearchParams();
 
@@ -70,13 +69,14 @@ export default function Category() {
       }
       setIsLoading(false);
     }, 500), // Debounce delay
-    [categorySlug, searchVal, selectedTags, minPrice, maxPrice, sortBy, currentPage]
+    [categorySlug, selectedTags, minPrice, maxPrice, sortBy, currentPage]
   );
 
   useEffect(() => {
+    setIsLoading(true);
     fetchProducts();
     scrollToTop();
-  }, [categorySlug,currentPage, fetchProducts, scrollToTop]);
+  }, [categorySlug, currentPage, fetchProducts, scrollToTop]);
 
   const handleValChange = (e) => {
     setSearchVal(e.target.value);
@@ -99,6 +99,12 @@ export default function Category() {
   return (
     <div className="w-full py-2 relative">
       <Wrapper>
+      {isLoading ? (
+          <div className="w-full min-h-screen flex items-center justify-center bg-white absolute inset-0 z-10">
+            <Loader />
+          </div>
+        ) : (
+          <>
         <div className="mx-4 my-2 container relative">
           <div className="grid grid-cols-1">
             <h3 className="text-2xl leading-normal font-semibold">Shop</h3>
@@ -239,12 +245,6 @@ export default function Category() {
           </div>
 
           <div className="lg:col-span-9 md:col-span-8 sm:col-span-2">
-            {isLoading ? (
-              <div className="w-full h-full flex items-center justify-center bg-white bg-opacity-50 absolute inset-0 z-10">
-                <Loader />
-              </div>
-            ) : (
-              <>
                 <div className="md:flex justify-between items-center my-3">
                   <span ref={topResult} className="font-semibold">
                     Showing{" "}
@@ -291,10 +291,10 @@ export default function Category() {
                     Next
                   </button>
                 </div>
-              </>
-            )}
           </div>
         </div>
+              </>
+            )}
       </Wrapper>
     </div>
   );

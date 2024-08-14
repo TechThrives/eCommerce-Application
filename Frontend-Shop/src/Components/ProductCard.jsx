@@ -24,16 +24,13 @@ const ProductCard = ({ product }) => {
 
   return (
     <Link
-      to={`/product/${product.id}`}
+      to={`/product/${product.slug}`}
       className="transform overflow-hidden bg-white duration-200 hover:scale-105 cursor-pointer flex flex-col items-center relative"
     >
       <img
-        width={500}
-        height={500}
-        style={{ maxWidth: "100%", maxHeight: "100%" }}
+      className="h-full object-cover"
         src={product.imageUrls[0]}
         alt={product.name}
-        className="w-full"
       />
       <div className="py-3 text-black/[0.9] w-full">
         <h2 className="text-xs md:text-sm font-semibold mb-2 truncate-multiline-4">

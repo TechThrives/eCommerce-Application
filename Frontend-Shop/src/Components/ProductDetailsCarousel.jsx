@@ -12,8 +12,8 @@ const ProductDetailsCarousel = ({ images }) => {
         thumbWidth={60}
         className="productCarousel"
       >
-        {images?.map((img) => (
-          <img key={img.id} src={img.url} alt={img.name} />
+        {images?.map((image) => (
+          <img className="h-96 object-contain" key={image} src={image} alt="Product Image" />
         ))}
       </Carousel>
     </div>

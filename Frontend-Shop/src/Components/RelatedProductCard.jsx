@@ -28,12 +28,9 @@ const RelatedProductCard = ({ product }) => {
       className="transform overflow-hidden bg-white duration-200 hover:scale-105 cursor-pointer flex flex-col items-center relative"
     >
       <img
-        width={500}
-        height={500}
-        style={{ maxWidth: "100%", maxHeight: "100%" }}
-        src={product.image}
+      className="h-full object-cover"
+        src={product.imageUrls[0]}
         alt={product.name}
-        className="w-full"
       />
       <div className="py-3 text-black/[0.9] w-full">
         <h2 className="text-xs md:text-sm font-semibold mb-2 truncate-multiline-4">
@@ -44,14 +41,14 @@ const RelatedProductCard = ({ product }) => {
             &#8377;{product.price}
           </p>
 
-          {product.original_price && (
+          {product.originalPrice && (
             <>
               <p className="text-xs md:text-sm font-medium line-through text-black/[0.7]">
-                &#8377;{product.original_price}
+                &#8377;{product.originalPrice}
               </p>
               <p className="text-xs md:text-sm ml-auto font-medium text-green-500">
                 {getDiscountedPricePercentage(
-                  product.original_price,
+                  product.originalPrice,
                   product.price
                 )}
                 % off

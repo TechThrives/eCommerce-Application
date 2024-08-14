@@ -51,7 +51,7 @@ export default function App() {
                 <Route path="/payment-failed" element={<PaymentFailed />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/category/:categorySlug" element={<Category />} />
-                <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/product/:productSlug" element={<ProductDetails />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

@@ -31,7 +31,6 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     checkAuth();
-    console.log(user);
   }, [navigate]);
 
   if (isLoading) {
