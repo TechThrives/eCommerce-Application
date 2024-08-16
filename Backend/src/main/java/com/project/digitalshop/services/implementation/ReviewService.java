@@ -1,5 +1,6 @@
 package com.project.digitalshop.services.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,7 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.project.digitalshop.dto.product.ProductResponseDTO;
+import com.project.digitalshop.dto.review.ProductReviewSummaryDTO;
 import com.project.digitalshop.dto.review.ReviewDTO;
+import com.project.digitalshop.dto.review.ReviewDistributionDTO;
 import com.project.digitalshop.dto.review.ReviewProductDTO;
 import com.project.digitalshop.dto.review.ReviewResponseDTO;
 import com.project.digitalshop.dto.review.ReviewUpdateDTO;
@@ -100,13 +104,13 @@ public class ReviewService implements IReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NotFoundException("Review Not Found!!!"));
 
+        reviewRepository.deleteById(reviewId);
+        
         Product product = review.getProduct();
         product.decrementReviewCount();
         float avgRating = calculateAverageRating(product);
         product.setAvgRating(avgRating);
         productRepository.save(product);
-
-        reviewRepository.deleteById(reviewId);
     }
 
     @Override
@@ -128,6 +132,27 @@ public class ReviewService implements IReviewService {
     @Override
     public Page<ReviewResponseDTO> getReviewsByProductId(UUID productId, int pageNo, int pageSize) {
         Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product Not Found!!!"));
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Review> reviewPage = reviewRepository.findByProduct(product, pageable);
+
+        return reviewPage.map(review -> {
+            ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO();
+            BeanUtils.copyProperties(review, reviewResponseDTO, "product", "user");
+            ReviewUserDTO reviewUserDTO = new ReviewUserDTO();
+            BeanUtils.copyProperties(review.getUser(), reviewUserDTO);
+            reviewResponseDTO.setUser(reviewUserDTO);
+            ReviewProductDTO reviewProductDTO = new ReviewProductDTO();
+            BeanUtils.copyProperties(review.getProduct(), reviewProductDTO);
+            reviewResponseDTO.setProduct(reviewProductDTO);
+            return reviewResponseDTO;
+        });
+    }
+
+    @Override
+    public Page<ReviewResponseDTO> getReviewsByProductSlug(String productSlug, int pageNo, int pageSize) {
+        Product product = productRepository.findBySlug(productSlug)
                 .orElseThrow(() -> new NotFoundException("Product Not Found!!!"));
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -185,14 +210,37 @@ public class ReviewService implements IReviewService {
     }
 
     public float calculateAverageRating(Product product) {
-        List<Review> reviews = product.getReviews();
-        if (reviews.isEmpty()) {
-            return 0;
-        }
-        return (float) reviews.stream()
-                      .mapToDouble(Review::getRating)
-                      .average()
-                      .orElse(0);
+        return reviewRepository.findAverageRatingByProductId(product.getId());
     }
 
+    @Override
+    public ProductReviewSummaryDTO getProductReviewSummary(String productSlug) {
+        Product product = productRepository.findBySlug(productSlug)
+                .orElseThrow(() -> new NotFoundException("Product Not Found!!!"));
+                
+        long totalReviews = reviewRepository.countByProductId(product.getId());
+
+        float avgRating = calculateAverageRating(product);
+
+        List<ReviewDistributionDTO> distribution = new ArrayList<>();
+
+        // Create buckets for ratings from 5 to 1
+        for (int i = 5; i >= 1; i--) {
+            long count = reviewRepository.countByProductIdAndRatingRange(product.getId(), i - 0.5, i + 0.5);
+            String percentage = totalReviews > 0 ? String.format("%.0f", ((double) count / totalReviews) * 100) : "0";
+
+            distribution.add(new ReviewDistributionDTO(i, count, percentage));
+        }
+
+        ProductResponseDTO productResponse = new ProductResponseDTO();
+        BeanUtils.copyProperties(product, productResponse);
+
+        ProductReviewSummaryDTO summary = new ProductReviewSummaryDTO();
+        summary.setReviewCount(totalReviews);
+        summary.setAvgRating(avgRating);
+        summary.setProduct(productResponse);
+        summary.setReviewDistribution(distribution);
+
+        return summary;
+    }
 }

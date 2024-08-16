@@ -56,7 +56,7 @@ public class Product {
     private Category category;
 
     @Column(nullable = false)
-    private float avgRating = 0;
+    private float avgRating = 0.0f;
 
     @Column(nullable = false)
     private int reviewCount = 0;

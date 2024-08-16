@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.digitalshop.dto.review.ProductReviewSummaryDTO;
 import com.project.digitalshop.dto.review.ReviewDTO;
+import com.project.digitalshop.dto.review.ReviewDistributionDTO;
 import com.project.digitalshop.dto.review.ReviewResponseDTO;
 import com.project.digitalshop.dto.review.ReviewUpdateDTO;
 import com.project.digitalshop.services.interfaces.IReviewService;
@@ -74,6 +76,14 @@ public class ReviewController {
         Page<ReviewResponseDTO> reviewPage = reviewService.getReviewsByProductId(productId, pageNo, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(reviewPage);
     }
+    
+    @GetMapping("/product/slug/{productSlug}")
+    public ResponseEntity<Page<ReviewResponseDTO>> getReviewsByProductId(@PathVariable String productSlug,
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        Page<ReviewResponseDTO> reviewPage = reviewService.getReviewsByProductSlug(productSlug, pageNo, pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(reviewPage);
+    }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<ReviewResponseDTO>> getReviewsByUserId(@PathVariable UUID userId,
@@ -81,5 +91,11 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int pageSize) {
         Page<ReviewResponseDTO> reviewPage = reviewService.getReviewsByUserId(userId, pageNo, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(reviewPage);
+    }
+
+    @GetMapping("/product-summary/slug/{productSlug}")
+    public ResponseEntity<ProductReviewSummaryDTO> getReviewDistribution(@PathVariable String productSlug) {
+        ProductReviewSummaryDTO productSummary = reviewService.getProductReviewSummary(productSlug);
+        return ResponseEntity.status(HttpStatus.OK).body(productSummary);
     }
 }

@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 
+import com.project.digitalshop.dto.review.ProductReviewSummaryDTO;
 import com.project.digitalshop.dto.review.ReviewDTO;
 import com.project.digitalshop.dto.review.ReviewResponseDTO;
 import com.project.digitalshop.dto.review.ReviewUpdateDTO;
@@ -21,7 +22,11 @@ public interface IReviewService {
 
     Page<ReviewResponseDTO> getReviewsByProductId(UUID productId, int pageNo, int pageSize);
 
+    Page<ReviewResponseDTO> getReviewsByProductSlug(String productSlug, int pageNo, int pageSize);
+
     Page<ReviewResponseDTO> getReviewsByUserId(UUID userId, int pageNo, int pageSize);
 
     Page<ReviewResponseDTO> getAllReviews(int pageNo, int pageSize);
+
+    ProductReviewSummaryDTO getProductReviewSummary(String productSlug);
 }
