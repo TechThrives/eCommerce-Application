@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosConfig from "../../Utils/axiosConfig";
 import { notify } from "../../Utils/Helper";
 import TableView from "../../Components/TableView";
 import Pagination from "../../Components/Pagination";
-import Model from "../../Components/Model";
-import InfoModal from "../../Components/InfoModal";
 import Loader from "../../Components/Loader";
+import Model from "../../Components/Model";
 
-export default function Reviews() {
+export default function Invoices() {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [reviews, setReviews] = useState([]);
+  const [invoices, setInvoices] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [selectedReview, setSelectedReview] = useState(null);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isInfoModelOpen, setIsInfoModelOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const pageSize = 10; // Assuming page size from API response
 
   const userId = "750d348b-0681-41e5-a535-926b7681390a";
-  const fetchReviews = async () => {
+  const fetchInvoices = async () => {
     try {
       const response = await axiosConfig.get(
-        `/api/reviews/user/${userId}?pageNo=${
+        `/api/invoices/user/${userId}?pageNo=${
           currentPage - 1
         }&pageSize=${pageSize}`
       );
       if (response.data) {
-        setReviews(response.data.content);
+        setInvoices(response.data.content);
         setTotalPages(response.data.totalPages);
         setTotalElements(response.data.totalElements);
       }
@@ -46,18 +46,18 @@ export default function Reviews() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchReviews();
+    fetchInvoices();
   }, [currentPage]);
 
   const handleDelete = async () => {
     setIsLoading(true);
     try {
       const response = await axiosConfig.delete(
-        `/api/reviews/${selectedReview.id}`
+        `/api/invoices/${selectedInvoice.id}`
       );
       if (response.status === 204) {
-        notify("Review deleted successfully", "success");
-        fetchReviews();
+        notify("Invoice deleted successfully", "success");
+        fetchInvoices();
       }
     } catch (error) {
       if (error.response) {
@@ -71,7 +71,7 @@ export default function Reviews() {
         notify("An unexpected error occurred.", "error");
       }
     }
-    setSelectedReview(null);
+    setSelectedInvoice(null);
     setIsModelOpen(false);
     setIsLoading(false);
   };
@@ -81,9 +81,8 @@ export default function Reviews() {
   };
 
   const tableData = {
-    name: "Reviews",
+    name: "Invoices",
   };
-
   const columns = [
     {
       field: "id",
@@ -94,28 +93,28 @@ export default function Reviews() {
       field: "product",
       headerName: "Product",
       type: "text",
-      jsonField: "product.name",
+      render: (rowData) => `${rowData.products.length}`,
     },
     {
-      field: "reviewText",
-      headerName: "Review",
-      type: "longText",
+      field: "paymentStatus",
+      headerName: "Status",
+      type: "status",
     },
     {
-      field: "rating",
-      headerName: "Rating",
-      type: "rating",
-    },
-    {
-      field: "modifiedOn",
-      headerName: "Date",
+      field: "createdOn",
+      headerName: "Created On",
       type: "date",
+    },
+    {
+      field: "totalPrice",
+      headerName: "Total",
+      type: "price",
     },
     {
       headerName: "Action",
       field: "actions",
       type: "actions",
-      actions: ["view", "edit", "delete"],
+      actions: ["view", "delete"],
     },
   ];
 
@@ -128,26 +127,19 @@ export default function Reviews() {
     ) : (
       <>
       <div className="flex flex-col">
-        {isModelOpen && (
+      {isModelOpen && (
           <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
-        )}
-        {isInfoModelOpen && (
-          <InfoModal
-            setIsModelOpen={setIsInfoModelOpen}
-            data={selectedReview}
-          />
         )}
         <div className="items-center my-4">
           <TableView
             tableData={tableData}
             columns={columns}
-            rows={reviews}
+            rows={invoices}
             handleView={(row) => {
-              setSelectedReview(row);
-              setIsInfoModelOpen(true);
+              navigate(`/view-invoice/${row.id}`);
             }}
             handleDelete={(row) => {
-              setSelectedReview(row);
+              setSelectedInvoice(row);
               setIsModelOpen(true);
             }}
           />
@@ -162,7 +154,7 @@ export default function Reviews() {
           </div>
         </div>
       </div>
-    </>
+      </>
     )}
     </>
   );

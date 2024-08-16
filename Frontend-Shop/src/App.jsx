@@ -6,7 +6,7 @@ import UserLayout from "./Layout/UserLayout";
 // User Pages
 import Account from "./Pages/User/Account";
 import Profile from "./Pages/User/Profile";
-import Orders from "./Pages/User/Orders";
+import Invoices from "./Pages/User/Invoices";
 import Reviews from "./Pages/User/Reviews";
 // Pages
 import Home from "./Pages/Home";
@@ -39,7 +39,7 @@ export default function App() {
                 <Route path="/account" element={<UserLayout />}>
                   <Route index element={<Account />} />
                   <Route path="profile" element={<Profile />} />
-                  <Route path="orders" element={<Orders />} />
+                  <Route path="invoices" element={<Invoices />} />
                   <Route path="reviews" element={<Reviews />} />
                 </Route>
 
@@ -53,7 +53,7 @@ export default function App() {
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/category/:categorySlug" element={<Category />} />
                 <Route path="/product/:productSlug" element={<ProductDetails />} />
-                <Route path="/product-review" element={<ProductReviews />} />
+                <Route path="/product-reviews/:productSlug" element={<ProductReviews />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

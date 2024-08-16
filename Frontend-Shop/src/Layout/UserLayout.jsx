@@ -20,8 +20,8 @@ export default function UserLayout() {
       icon: <MdDashboard />,
     },
     {
-      name: "Orders",
-      path: "/account/orders",
+      name: "Invoices",
+      path: "/account/invoices",
       icon: <FaFileInvoice />,
     },
     {

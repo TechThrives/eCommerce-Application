@@ -52,7 +52,7 @@ const ProductDetails = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(!user){
+    if (!user) {
       notify("Please Sign in to write a review", "error");
       return;
     }
@@ -80,10 +80,10 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    const fetchReviews = async (productId) => {
+    const fetchReviews = async () => {
       try {
         const response = await axiosConfig.get(
-          `/api/reviews/product/${productId}?pageNo=0&pageSize=10`
+          `/api/reviews/product/slug/${productSlug}?pageNo=0&pageSize=10`
         );
         if (response.data) {
           setReviews(response.data.content);
@@ -100,11 +100,13 @@ const ProductDetails = () => {
       }
     };
 
-    const fetchRelatedProducts = async (categoryId) => {
+    const fetchRelatedProducts = async (categorySlug) => {
       try {
-        const response = await axiosConfig.get(`/api/products/category/${categoryId}?pageNo=0&pageSize=10`);
+        const response = await axiosConfig.get(
+          `/api/products/category/slug/${categorySlug}?pageNo=0&pageSize=10`
+        );
         if (response.data) {
-          setRelatedProducts(response.data);
+          setRelatedProducts(response.data.content);
         }
       } catch (error) {
         if (error.response) {
@@ -125,8 +127,8 @@ const ProductDetails = () => {
         );
         if (response.data) {
           setProductDetails(response.data);
-          fetchReviews(response.data.id);
-          fetchRelatedProducts(response.data.category.id);
+          fetchReviews();
+          fetchRelatedProducts(response.data.category.slug);
         }
       } catch (error) {
         if (error.response) {
@@ -410,54 +412,59 @@ const ProductDetails = () => {
                   <div className="flex items-center justify-center">
                     <div className="w-[90%]">
                       {reviews.length > 0 ? (
-                        reviews.map((review) => (
-                          <div
-                            key={review.id}
-                            className="p-4 bg-gray-100 rounded-md shadow mt-6 w-full"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <img
-                                  src={review.user.profileImageUrl}
-                                  className="h-11 w-11 rounded-full shadow object-cover"
-                                  alt=""
-                                />
-
-                                <div className="ms-3 flex-1">
-                                  <span className="text-md font-semibold hover:text-orange-500 duration-500">
-                                    {review.user.firstName}{" "}
-                                    {review.user.lastName}
-                                  </span>
-                                  <p className="text-sm font-medium text-slate-600">
-                                    {new Date(review.modifiedOn).toLocaleString(
-                                      "en-US",
-                                      {
+                        <>
+                          {reviews.map((review) => (
+                            <div
+                              key={review.id}
+                              className="p-4 bg-gray-100 rounded-md shadow mt-6 w-full"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                  <img
+                                    src={review.user.profileImageUrl}
+                                    className="h-11 w-11 rounded-full shadow object-cover"
+                                    alt={`${review.user.firstName} ${review.user.lastName}`}
+                                  />
+                                  <div className="ms-3 flex-1">
+                                    <span className="text-md font-semibold hover:text-orange-500 duration-500">
+                                      {review.user.firstName}{" "}
+                                      {review.user.lastName}
+                                    </span>
+                                    <p className="text-sm font-medium text-slate-600">
+                                      {new Date(
+                                        review.modifiedOn
+                                      ).toLocaleString("en-US", {
                                         year: "numeric",
                                         month: "2-digit",
                                         day: "2-digit",
-                                      }
-                                    )}
-                                  </p>
+                                      })}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
+                              <ReactStars
+                                count={5}
+                                value={review.rating}
+                                edit={false}
+                                size={24}
+                                isHalf={true}
+                                emptyIcon={<IoMdStarOutline />}
+                                halfIcon={<IoMdStarHalf />}
+                                fullIcon={<IoMdStar />}
+                                activeColor="#ffd700"
+                              />
+                              <p className="text-stone-800 italic font-medium">
+                                "{review.reviewText}"
+                              </p>
                             </div>
-                            <ReactStars
-                              count={5}
-                              value={review.rating}
-                              edit={false}
-                              size={24}
-                              isHalf={true}
-                              emptyIcon={<IoMdStarOutline />}
-                              halfIcon={<IoMdStarHalf />}
-                              fullIcon={<IoMdStar />}
-                              activeColor="#ffd700"
-                            />
-
-                            <p className="text-stone-800 italic font-medium">
-                              "{review.reviewText}"
-                            </p>
-                          </div>
-                        ))
+                          ))}
+                          <button
+                        onClick={() => navigate(`/product-reviews/${productSlug}`)}
+                        className="w-32 py-2 mt-4 rounded-md bg-black text-white text-md font-medium transition-transform active:scale-95 hover:opacity-75"
+                      >
+                        View All
+                      </button>
+                        </>
                       ) : (
                         <p className="text-center text-lg font-semibold">
                           There are no reviews yet. Be the first to share your
@@ -469,58 +476,58 @@ const ProductDetails = () => {
                 </div>
               </div>
               {/* REVIEW FORM START */}
-                <div className="flex flex-col p-6 mt-2 justify-center items-center">
-                  <h5 className="text-xl font-semibold">Leave A Review</h5>
-                  <div className="flex mt-6 w-full md:w-9/12">
-                    <div className="mr-4 mt-2">
-                      <img
-                        src="https://cdn.easyfrontend.com/pictures/testimonial/testimonial_square_1.jpeg"
-                        alt=""
-                        className="max-w-full h-auto rounded-full border"
-                        width="50"
-                      />
-                    </div>
-                    <div className="flex-grow">
-                      <div>
-                        <div className="relative mt-2 mb-4">
-                          <FaRegComment className="w-4 h-4 absolute top-3 start-4" />
-                          <textarea
-                            name="comments"
-                            id="comments"
-                            value={reviewText}
-                            onChange={handleTextareaChange}
-                            className="ps-11 w-full py-2 px-3 h-28 bg-transparent rounded outline-none border-2 border-gray-300 focus:ring-0"
-                            placeholder="Message..."
-                          ></textarea>
-                          <p className="text-xs text-gray-500">
-                            Press Shift + Enter to go to a new line
-                          </p>
-                          <ReactStars
-                            key={rating} //For Force Update
-                            count={5}
-                            value={rating}
-                            onChange={handleRatingChange}
-                            size={24}
-                            isHalf={true}
-                            emptyIcon={<IoMdStarOutline />}
-                            halfIcon={<IoMdStarHalf />}
-                            fullIcon={<IoMdStar />}
-                            activeColor="#ffd700"
-                          />
-                        </div>
-                        {error && (
-                          <p className="text-sm text-red-500 mb-2">{error}</p>
-                        )}
-                        <button
-                          onClick={handleSubmit}
-                          className="w-32 py-2 rounded-md bg-black text-white text-md font-medium transition-transform active:scale-95 hover:opacity-75"
-                        >
-                          Post Review
-                        </button>
+              <div className="flex flex-col p-6 mt-2 justify-center items-center">
+                <h5 className="text-xl font-semibold">Leave A Review</h5>
+                <div className="flex mt-6 w-full md:w-9/12">
+                  <div className="mr-4 mt-2">
+                    <img
+                      src="https://cdn.easyfrontend.com/pictures/testimonial/testimonial_square_1.jpeg"
+                      alt=""
+                      className="max-w-full h-auto rounded-full border"
+                      width="50"
+                    />
+                  </div>
+                  <div className="flex-grow">
+                    <div>
+                      <div className="relative mt-2 mb-4">
+                        <FaRegComment className="w-4 h-4 absolute top-3 start-4" />
+                        <textarea
+                          name="comments"
+                          id="comments"
+                          value={reviewText}
+                          onChange={handleTextareaChange}
+                          className="ps-11 w-full py-2 px-3 h-28 bg-transparent rounded outline-none border-2 border-gray-300 focus:ring-0"
+                          placeholder="Message..."
+                        ></textarea>
+                        <p className="text-xs text-gray-500">
+                          Press Shift + Enter to go to a new line
+                        </p>
+                        <ReactStars
+                          key={rating} //For Force Update
+                          count={5}
+                          value={rating}
+                          onChange={handleRatingChange}
+                          size={24}
+                          isHalf={true}
+                          emptyIcon={<IoMdStarOutline />}
+                          halfIcon={<IoMdStarHalf />}
+                          fullIcon={<IoMdStar />}
+                          activeColor="#ffd700"
+                        />
                       </div>
+                      {error && (
+                        <p className="text-sm text-red-500 mb-2">{error}</p>
+                      )}
+                      <button
+                        onClick={handleSubmit}
+                        className="w-32 py-2 rounded-md bg-black text-white text-md font-medium transition-transform active:scale-95 hover:opacity-75"
+                      >
+                        Post Review
+                      </button>
                     </div>
                   </div>
                 </div>
+              </div>
               {/* REVIEW FORM END */}
             </div>
 
@@ -533,7 +540,7 @@ const ProductDetails = () => {
 
               <div className="md:text-end text-center md:block">
                 <Link
-                  to="/shop"
+                  to={`/category/${productDetails.category.slug}`}
                   className="text-stone-900 hover:text-orange-500"
                 >
                   <div className="flex items-center justify-center md:justify-end">

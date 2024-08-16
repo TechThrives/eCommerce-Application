@@ -3,6 +3,12 @@ import { Link } from "react-router-dom";
 import { MdArrowForward } from "react-icons/md";
 import ReactStars from "react-rating-stars-component";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import {
+  FaClock,
+  FaTimesCircle,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
 import { IoMdStar, IoMdStarHalf, IoMdStarOutline } from "react-icons/io";
 
 const TableView = ({
@@ -46,9 +52,52 @@ const TableView = ({
       </div>
     );
   };
+  const renderPaymentStatus = (status) => {
+    switch (status) {
+      case "PENDING":
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60">
+            <FaClock />
+            <h2 className="text-sm font-normal">Pending</h2>
+          </div>
+        );
+      case "SUCCESS":
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60">
+            <FaCheckCircle />
+            <h2 className="text-sm font-normal">Paid</h2>
+          </div>
+        );
+      case "FAILED":
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-red-500 bg-red-100/60">
+            <FaTimesCircle />
+            <h2 className="text-sm font-normal">Failed</h2>
+          </div>
+        );
+      default:
+        return (
+          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-gray-500 bg-gray-100/60">
+            <FaExclamationCircle />
+            <h2 className="text-sm font-normal">{status}</h2>
+          </div>
+        );
+    }
+  };
+
+  const getNestedValue = (object, path) => {
+    return path.split(".").reduce((o, p) => (o ? o[p] : ""), object);
+  };
 
   const renderCellContent = (column, row, index) => {
-    const value = row[column.field];
+    const value = column.jsonField
+      ? getNestedValue(row, column.jsonField)
+      : row[column.field];
+
+    if (column.render) {
+      return column.render(row);
+    }
+
     switch (column.type) {
       case "index":
         return <p className="font-bold text-blue-500">{index + 1}</p>;
@@ -63,24 +112,38 @@ const TableView = ({
       case "price":
         return <span className="font-bold">&#8377;{value}</span>;
       case "status":
-        return (
-          <span
-            className={`p-1 text-xs font-medium uppercase tracking-wider ${getStatusStyle(
-              value
-            )}`}
-          >
-            {value}
-          </span>
-        );
+        return renderPaymentStatus(value);
       case "date":
         return <p className="text-sm">{formatDateTime(value)}</p>;
       case "rating":
         return renderStars(value);
       case "actions":
         return (
-          <div className="flex flex-row gap-2">
-            <FaEye className="cursor-pointer h-4 w-4" onClick={handleView} />
-            <FaEdit className="cursor-pointer h-4 w-4" onClick={handleEdit} />
+          <div className="flex gap-2">
+            {column.actions.includes("view") && (
+              <FaEye
+                className="cursor-pointer h-4 w-4"
+                onClick={(e) => {
+                  handleView(row);
+                }}
+              />
+            )}
+            {column.actions.includes("edit") && (
+              <FaEdit
+                className="cursor-pointer h-4 w-4"
+                onClick={(e) => {
+                  handleEdit(row);
+                }}
+              />
+            )}
+            {column.actions.includes("delete") && (
+              <FaTrash
+                className="cursor-pointer h-4 w-4"
+                onClick={(e) => {
+                  handleDelete(row);
+                }}
+              />
+            )}
           </div>
         );
       default:
@@ -136,38 +199,91 @@ const TableView = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {rows.map((row, index) => (
-              <tr
-                key={row.id}
-                className={`bg-${index % 2 === 0 ? "white" : "gray-100"}`}
-              >
-                {columns.map((column) => (
-                  <td
-                    key={column.headerName}
-                    className={`p-2 text-gray-700 whitespace-nowrap ${column.className}`}
-                  >
-                    {renderCellContent(column, row, index)}
-                  </td>
-                ))}
+            {rows.length > 0 ? (
+              rows.map((row, index) => (
+                <tr
+                  key={row.id}
+                  className={`bg-${index % 2 === 0 ? "white" : "gray-100"}`}
+                >
+                  {columns.map((column) => (
+                    <td
+                      key={column.headerName}
+                      className={`p-2 text-gray-700 whitespace-nowrap ${column.className}`}
+                    >
+                      {renderCellContent(column, row, index)}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 text-center"
+                >
+                  No Records Found
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
-        {rows.map((row, index) => (
-          <div key={row.id} className="bg-white rounded-lg shadow p-4">
-            {columns.map((column) => (
-              <div
-                key={column.headerName}
-                className={`p-2 text-gray-700  ${column.className}`}
-              >
-                <span>{renderCellContent(column, row, index)}</span>
+        {rows.length > 0 ? (
+          rows.map((row, index) => (
+            <div key={row.id} className="bg-white rounded-lg shadow p-4">
+              {columns
+                .filter((column) => column.type !== "actions") // Exclude actions column
+                .map((column) => (
+                  <div
+                    key={column.headerName}
+                    className={`p-2 text-gray-700  ${column.className}`}
+                  >
+                    <span>{renderCellContent(column, row, index)}</span>
+                  </div>
+                ))}
+              <div className="mt-4 text-stone-700 flex gap-2">
+                {columns
+                  .find((col) => col.type === "actions")
+                  ?.actions.map((action) => {
+                    switch (action) {
+                      case "view":
+                        return (
+                          <FaEye
+                            key={action}
+                            className="cursor-pointer h-4 w-4"
+                            onClick={(e) => handleView(row)}
+                          />
+                        );
+                      case "edit":
+                        return (
+                          <FaEdit
+                            key={action}
+                            className="cursor-pointer h-4 w-4"
+                            onClick={(e) => handleEdit(row)}
+                          />
+                        );
+                      case "delete":
+                        return (
+                          <FaTrash
+                            key={action}
+                            className="cursor-pointer h-4 w-4"
+                            onClick={(e) => handleDelete(row)}
+                          />
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
               </div>
-            ))}
+            </div>
+          ))
+        ) : (
+          <div className=" p-1 text-gray-700 col-span-full text-center">
+            No Records Found
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAppContext } from "./AppContext";
-import Loader from "../components/Loader";
+import Loader from "../Components/Loader";
 
 const PrivateRoute = ({ children }) => {
   const { user, isLoading } = useAppContext();
