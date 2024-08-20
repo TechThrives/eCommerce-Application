@@ -24,6 +24,7 @@ import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import { ToastContainer } from "react-toastify";
 import ProductReviews from "./Pages/ProductReviews";
+import ViewInvoice from "./Pages/User/ViewInvoice";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
                   <Route index element={<Account />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="invoices" element={<Invoices />} />
+                  <Route path="view-invoice/:invoiceId" element={<ViewInvoice />} />
                   <Route path="reviews" element={<Reviews />} />
                 </Route>
 

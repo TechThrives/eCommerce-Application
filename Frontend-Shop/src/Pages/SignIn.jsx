@@ -1,109 +1,184 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useAppContext } from "../Features/AppContext";
+import axiosConfig from "../Utils/axiosConfig";
+import { notify } from "../Utils/Helper";
+import Logo from "../Components/Images/Logo.svg";
 import Wrapper from "../Components/Wrapper";
-import AuthPage from "../Components/Images/AuthPage.svg";
-import { IoIosMail } from "react-icons/io";
-import { MdKey } from "react-icons/md";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 export default function SignIn() {
-  const [userData, setUserData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+  const { user, setIsLoading } = useAppContext();
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
-  const handleSignIn = () => {
-    console.log(userData);
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    if (!userData.email.trim()) {
+      notify("Email is required.", "error");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(userData.email)) {
+      notify("Email should be valid.", "error");
+      return;
+    }
+
+    if (!userData.password.trim()) {
+      notify("Password is required.", "error");
+      return;
+    }
+
+    if (
+      !/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{6,}$/.test(
+        userData.password
+      )
+    ) {
+      notify(
+        "Password must be at least 6 characters long and contain at least one digit, one lowercase letter, one uppercase letter, one special character, and no whitespace.",
+        "error"
+      );
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.post(`/api/auth/sign-in`, {
+        email: userData.email,
+        password: userData.password,
+      });
+      if (response.data) {
+        notify("Sign in successful.", "success");
+        localStorage.setItem("auth_token", response.data.jwtToken);
+        localStorage.setItem("refresh_token", response.data.refreshToken);
+        setUserData({ email: "", password: "" });
+        navigate("/");
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(`${data.message}: ${data.details.join(", ")}`, "error");
+        } else {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setIsLoading(false);
   };
-  return (
+
+  return user ? (
+    <Navigate to="/" />
+  ) : (
     <>
       <Wrapper>
-        <div className="m-2 md:m-16 rounded-sm border border-stroke bg-white shadow-default ">
-          <div className="flex flex-wrap items-center">
-            <div className="hidden w-full lg:block lg:w-1/2">
-              <div className="py-17.5 px-26 text-center">
-                <span className="mt-15 inline-block">
-                  <img
-                    src={AuthPage}
-                    width={300}
-                    height={300}
-                    className="w-[300px] md:w-[400px]"
-                    alt=""
-                  />
-                </span>
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="text-center mb-8">
+            <Link
+              className="flex flex-row items-center justify-center mt-4"
+              to="/"
+            >
+              <img src={Logo} className="w-[40px] mr-2" alt="logo" />
+              <h3 className="text-gray-800 text-2xl font-semibold">Digital Shop</h3>
+            </Link>
+            <h4 className="text-gray-800 text-base font-semibold mt-2">
+              Sign In to your account
+            </h4>
+          </div>
+
+          <form>
+            <div className="grid sm:grid-cols-1 gap-8">
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  onChange={handleChange}
+                  value={userData.email}
+                  className="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3.5 rounded-md focus:bg-transparent outline-blue-500 transition-all"
+                  placeholder="Enter email"
+                />
               </div>
-            </div>
-
-            <div className="w-full border-stroke lg:w-1/2 lg:border-l-2">
-              <div className="w-full p-4 sm:p-12.5 lg:p-17.5">
-                <h2 className="my-9 text-center text-2xl font-bold text-black sm:text-title-xl2">
-                  Sign In
-                </h2>
-
-                <div>
-                  <div className="relative mb-6">
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={userData.email}
-                      onChange={handleChange}
-                      className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
-                      placeholder=""
-                      required
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">Password</label>
+                <div className="relative flex items-center">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    onChange={handleChange}
+                    value={userData.password}
+                    className="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3.5 rounded-md focus:bg-transparent outline-blue-500 transition-all"
+                    placeholder="Enter password"
+                  />
+                  {showPassword ? (
+                    <FaEyeSlash
+                      className="absolute right-4 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
                     />
-                    <span className="absolute right-4 top-4">
-                      <IoIosMail className="text-[24px] fill-current" />
-                    </span>
-                    <label
-                      htmlFor="email"
-                      className="ml-1 absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4"
-                    >
-                      Email
-                    </label>
-                  </div>
-
-                  <div className="relative mb-6">
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={userData.password}
-                      onChange={handleChange}
-                      className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
-                      placeholder=""
-                      required
+                  ) : (
+                    <FaEye
+                      className="absolute right-4 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
                     />
-                    <span className="absolute right-4 top-4">
-                      <MdKey className="text-[24px] fill-current" />
-                    </span>
-                    <label
-                      htmlFor="password"
-                      className="ml-1 absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4"
-                    >
-                      Password
-                    </label>
-                  </div>
-
-                  <div className="mb-5">
-                    <button
-                      onClick={handleSignIn}
-                      className=" w-full py-4 px-8 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75"
-                    >
-                      Sign In
-                    </button>
-                  </div>
-
-                  <div className="mt-6 text-center font-semibold">
-                    <p>
-                      Don't have any account?{" "}
-                      <Link to="/sign-up" className="text-primary underline">
-                        Sign Up
-                      </Link>
-                    </p>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
+
+            <div className="!mt-12">
+              <button
+                type="button"
+                className="py-3.5 w-full px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
+                onClick={handleSignIn}
+              >
+                Sign In
+              </button>
+            </div>
+          </form>
+          <button className="py-3.5 w-full px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none border mt-5 flex justify-center items-center">
+            <svg
+              className="mr-3"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              width="20px"
+            >
+              <path
+                fill="#FFC107"
+                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+              ></path>
+              <path
+                fill="#FF3D00"
+                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+              ></path>
+              <path
+                fill="#4CAF50"
+                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+              ></path>
+              <path
+                fill="#1976D2"
+                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+              ></path>
+            </svg>
+            Sign In with Google
+          </button>
+          <div className="mt-6 text-center font-semibold">
+            <p>
+              Don't have an account?{" "}
+              <Link to="/sign-up" className="text-primary underline">
+                Sign Up
+              </Link>
+            </p>
           </div>
         </div>
       </Wrapper>

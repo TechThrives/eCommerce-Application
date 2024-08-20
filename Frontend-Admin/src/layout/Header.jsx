@@ -9,8 +9,8 @@ export default function Header() {
       <header className="app-header flex items-center px-5 gap-4">
         <a href="index.html" className="logo-box">
           <img
-            src={`${process.env.PUBLIC_URL}/assets/images/logo-sm.png`}
-            className="h-6"
+            src={`${process.env.PUBLIC_URL}/assets/images/Logo.svg`}
+            className="h-10"
             alt="Small logo"
           />
         </a>

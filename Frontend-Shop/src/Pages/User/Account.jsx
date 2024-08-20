@@ -7,18 +7,18 @@ import { FaHandHoldingHeart } from "react-icons/fa";
 import { FiBox } from "react-icons/fi";
 import TableView from "../../Components/TableView";
 import Loader from "../../Components/Loader";
+import { useAppContext } from "../../Features/AppContext";
 
 export default function Account() {
+  const {user} = useAppContext();
   const [details, setDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [invoices, setInvoices] = useState([]);
   const [reviews, setReviews] = useState([]);
 
-  const userId = "750d348b-0681-41e5-a535-926b7681390a";
-
   const fetchUserDetails = async () => {
     try {
-      const response = await axiosConfig.get(`/api/users/${userId}`);
+      const response = await axiosConfig.get(`/api/users/${user.id}`);
       if (response.data) {
         setDetails(response.data);
         fetchInvoices();
@@ -40,7 +40,7 @@ export default function Account() {
   const fetchReviews = async () => {
     try {
       const response = await axiosConfig.get(
-        `/api/reviews/user/${userId}?pageNo=0&pageSize=5`
+        `/api/reviews/user/${user.id}?pageNo=0&pageSize=5`
       );
       if (response.data) {
         setReviews(response.data.content);
@@ -60,7 +60,7 @@ export default function Account() {
   const fetchInvoices = async () => {
     try {
       const response = await axiosConfig.get(
-        `/api/invoices/user/${userId}?pageNo=0&pageSize=5`
+        `/api/invoices/user/${user.id}?pageNo=0&pageSize=5`
       );
       if (response.data) {
         setInvoices(response.data.content);
@@ -84,7 +84,7 @@ export default function Account() {
 
   const tableDataInvoice = {
     name: "Invoices",
-    link: "account/invoices",
+    link: "/account/invoices",
     linkName: "View All",
   };
 
@@ -119,7 +119,7 @@ export default function Account() {
 
   const tableDataReview = {
     name: "Reviews",
-    link: "account/reviews",
+    link: "/account/reviews",
     linkName: "View All",
   };
 

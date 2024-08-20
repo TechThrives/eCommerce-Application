@@ -6,8 +6,10 @@ import Pagination from "../../Components/Pagination";
 import Model from "../../Components/Model";
 import InfoModal from "../../Components/InfoModal";
 import Loader from "../../Components/Loader";
+import { useAppContext } from "../../Features/AppContext";
 
 export default function Reviews() {
+  const {user} = useAppContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -18,11 +20,10 @@ export default function Reviews() {
   const [isInfoModelOpen, setIsInfoModelOpen] = useState(false);
   const pageSize = 10; // Assuming page size from API response
 
-  const userId = "750d348b-0681-41e5-a535-926b7681390a";
   const fetchReviews = async () => {
     try {
       const response = await axiosConfig.get(
-        `/api/reviews/user/${userId}?pageNo=${
+        `/api/reviews/user/${user.id}?pageNo=${
           currentPage - 1
         }&pageSize=${pageSize}`
       );

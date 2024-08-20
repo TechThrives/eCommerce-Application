@@ -8,11 +8,17 @@ export default function RecoverPassword() {
           <div className="overflow-hidden sm:rounded-md rounded-none">
             <div className="px-6 py-8">
               <a href="/" className="flex justify-center mb-8">
-                <img
-                  className="h-6"
-                  src={`${process.env.PUBLIC_URL}/assets/images/logo-dark.png`}
-                  alt=""
-                />
+                <div className="flex flex-row items-center">
+                  <img
+                    className="logo-dark h-10"
+                    src={`${process.env.PUBLIC_URL}/assets/images/Logo.svg`}
+                    alt=""
+                  />
+
+                  <h1 className="text-lg md:text-xl font-semibold text-black">
+                    Digital Shop
+                  </h1>
+                </div>
               </a>
 
               <p className="text-center lg:w-3/4 mx-auto mb-6">

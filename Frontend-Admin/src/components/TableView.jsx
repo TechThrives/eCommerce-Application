@@ -223,7 +223,7 @@ const TableView = ({
                         {columns.map((column) => (
                           <td
                             key={column.headerName}
-                            className={`px-6 py-4 whitespace-nowrap text-sm text-gray-800 ${column.className}`}
+                            className={`px-6 py-4 whitespace-nowrap text-sm text-gray-800 ${column.className || ''}`}
                           >
                             {renderCellContent(column, row, index)}
                           </td>

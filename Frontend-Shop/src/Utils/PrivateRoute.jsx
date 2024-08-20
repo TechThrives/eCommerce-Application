@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAppContext } from "./AppContext";
+import { useAppContext } from "../Features/AppContext";
 import Loader from "../Components/Loader";
 
 const PrivateRoute = ({ children }) => {

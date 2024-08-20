@@ -121,11 +121,17 @@ export default function Sidebar() {
     <>
       <div className="app-menu">
         <a href="dashboard" className="logo-box">
-          <img
-            src={`${process.env.PUBLIC_URL}/assets/images/logo-dark.png`}
-            className="logo-dark h-6"
-            alt="Dark logo"
-          />
+          <div className="flex flex-row items-center">
+            <img
+              className="logo-dark h-10"
+              src={`${process.env.PUBLIC_URL}/assets/images/Logo.svg`}
+              alt=""
+            />
+
+            <h1 className="text-lg md:text-xl font-semibold text-black">
+              Digital Shop
+            </h1>
+          </div>
         </a>
 
         <div data-simplebar>

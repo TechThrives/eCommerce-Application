@@ -6,8 +6,10 @@ import TableView from "../../Components/TableView";
 import Pagination from "../../Components/Pagination";
 import Loader from "../../Components/Loader";
 import Model from "../../Components/Model";
+import { useAppContext } from "../../Features/AppContext";
 
 export default function Invoices() {
+  const {user} = useAppContext();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [invoices, setInvoices] = useState([]);
@@ -18,11 +20,10 @@ export default function Invoices() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const pageSize = 10; // Assuming page size from API response
 
-  const userId = "750d348b-0681-41e5-a535-926b7681390a";
   const fetchInvoices = async () => {
     try {
       const response = await axiosConfig.get(
-        `/api/invoices/user/${userId}?pageNo=${
+        `/api/invoices/user/${user.id}?pageNo=${
           currentPage - 1
         }&pageSize=${pageSize}`
       );
@@ -136,7 +137,7 @@ export default function Invoices() {
             columns={columns}
             rows={invoices}
             handleView={(row) => {
-              navigate(`/view-invoice/${row.id}`);
+              navigate(`/account/view-invoice/${row.id}`);
             }}
             handleDelete={(row) => {
               setSelectedInvoice(row);

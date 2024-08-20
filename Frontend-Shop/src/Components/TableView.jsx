@@ -208,7 +208,7 @@ const TableView = ({
                   {columns.map((column) => (
                     <td
                       key={column.headerName}
-                      className={`p-2 text-gray-700 whitespace-nowrap ${column.className}`}
+                      className={`p-2 text-gray-700 whitespace-nowrap ${column.className || ''}`}
                     >
                       {renderCellContent(column, row, index)}
                     </td>
@@ -238,7 +238,7 @@ const TableView = ({
                 .map((column) => (
                   <div
                     key={column.headerName}
-                    className={`p-2 text-gray-700  ${column.className}`}
+                    className={`p-2 text-gray-700 ${column.className || ''}`}
                   >
                     <span>{renderCellContent(column, row, index)}</span>
                   </div>

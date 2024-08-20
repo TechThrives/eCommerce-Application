@@ -2,15 +2,19 @@ import React from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 import { BiArrowBack } from "react-icons/bi";
-import Img1 from "../Components/Images/slide-1.png";
-import Img2 from "../Components/Images/slide-2.png";
-import Img3 from "../Components/Images/slide-3.png";
+import Img1 from "../Components/Images/Banner-1.png";
+import Img2 from "../Components/Images/Banner-2.png";
+import Img3 from "../Components/Images/Banner-3.png";
+import Img4 from "../Components/Images/Banner-4.png";
+import Img5 from "../Components/Images/Banner-5.png";
 import { Link } from "react-router-dom";
 
 const slides = [
   { src: Img1, alt: "Slide 1" },
   { src: Img2, alt: "Slide 2" },
   { src: Img3, alt: "Slide 3" },
+  { src: Img4, alt: "Slide 4" },
+  { src: Img5, alt: "Slide 5" },
 ];
 
 export default function HeroBanner() {

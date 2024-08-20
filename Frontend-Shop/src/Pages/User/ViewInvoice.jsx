@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axiosConfig from "../../utils/axiosConfig";
-import { useAppContext } from "../../utils/AppContext";
-import { notify } from "../../utils/Helper";
+import axiosConfig from "../../Utils/axiosConfig";
+import { useAppContext } from "../../Features/AppContext";
+import { notify } from "../../Utils/Helper";
+import Logo from "../../Components/Images/Logo.svg";
+import { FaRegCheckCircle } from "react-icons/fa";
 
 function ViewInvoice() {
   const { invoiceId } = useParams();
@@ -22,7 +24,7 @@ function ViewInvoice() {
           const { data } = error.response;
           if (data.details && Array.isArray(data.details) && data.message) {
             notify(data.message || "An unexpected error occurred.", "error");
-            navigate("/invoice-list");
+            navigate("/account/invoices");
           }
         } else {
           notify("An unexpected error occurred.", "error");
@@ -57,32 +59,14 @@ function ViewInvoice() {
 
   return (
     <>
-      <div className="card bg-white overflow-hidden scrollable-content">
-        <div className="card-header flex items-center justify-between">
-          <h4 className="card-title">Invoice Details</h4>
-          <div className="flex gap-3">
-            <button
-              className="btn bg-success text-white rounded-full"
-              onClick={() => printDiv("invoice")}
-            >
-              Print
-            </button>
-            <button
-              className="btn bg-primary text-white rounded-full"
-              onClick={() => navigate("/invoice-list")}
-            >
-              Back
-            </button>
-          </div>
-        </div>
-        <div className="card p-6" id="invoice">
+      <div className="relative  border border-gray-200/80 flex flex-col break-words box-border h-fit bg-white overflow-hidden scrollable-content">
+        <div
+          className="relative bg-white  border border-gray-200/80 flex flex-col break-words box-border h-fit p-6"
+          id="invoice"
+        >
           <div className="flex justify-between">
             <div className="flex flex-row items-center">
-              <img
-                className="h-12 mr-2"
-                src={`${process.env.PUBLIC_URL}/assets/images/Logo.svg`}
-                alt=""
-              />
+              <img className="h-12 mr-2" src={Logo} alt="" />
 
               <h1 className="text-lg md:text-xl font-semibold text-black">
                 Digital Shop
@@ -110,7 +94,7 @@ function ViewInvoice() {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-12 gap-3">
+          <div className="mt-4 grid grid-cols-12 gap-3 text-sm ">
             <div className="col-span-5">
               <h3 className="text-lg font-semibold text-gray-800">Bill to:</h3>
               <h3 className="text-md font-medium text-gray-800">
@@ -126,7 +110,7 @@ function ViewInvoice() {
 
             <div className="col-span-2"></div>
 
-            <div className="col-span-5 text-end">
+            <div className="col-span-5 text-end text-sm ">
               <table className="w-full">
                 <tbody>
                   <tr>
@@ -191,7 +175,7 @@ function ViewInvoice() {
                           </td>
                           <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                             <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60">
-                              <i className="uil uil-check-circle"></i>
+                              <FaRegCheckCircle />
                               <h2 className="text-sm font-normal">Paid</h2>
                             </div>
                           </td>
@@ -204,7 +188,7 @@ function ViewInvoice() {
             </div>
           </div>
 
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex justify-end text-sm ">
             <div className="w-full p-8"></div>
 
             <div className="w-full max-w-2xl sm:text-end space-y-2">
@@ -246,8 +230,8 @@ function ViewInvoice() {
           </div>
 
           <div className="mt-6">
-            <h4 className="text-lg font-semibold text-gray-800">Thank you!</h4>
-            <p className="text-gray-500">
+            <h4 className="text-md font-semibold text-gray-800">Thank you!</h4>
+            <p className="text-gray-500 text-sm">
               If you have any questions concerning this invoice, use the
               following contact information:
             </p>
@@ -274,6 +258,20 @@ function ViewInvoice() {
             </p>
           </div>
         </div>
+      </div>
+      <div className="flex justify-end gap-3">
+      <button
+        className="my-2 px-2 py-2 bg-stone-950 text-white rounded"
+        onClick={() => printDiv("invoice")}
+      >
+        Print
+      </button>
+      <button
+        className="my-2 px-2 py-2 bg-stone-950 text-white rounded"
+        onClick={() => navigate("/account/invoices")}
+      >
+        Back
+      </button>
       </div>
     </>
   );

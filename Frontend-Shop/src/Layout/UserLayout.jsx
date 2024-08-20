@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Wrapper from "../Components/Wrapper";
+import PrivateRoute from "../Utils/PrivateRoute";
 import { Link, useLocation } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 import { MdDashboard, MdClose, MdReviews } from "react-icons/md";
@@ -37,6 +38,7 @@ export default function UserLayout() {
   ];
   return (
     <>
+    <PrivateRoute>
       <div className="w-full py-2 relative">
         <Wrapper>
           <div className="mx-4 my-2 relative">
@@ -145,6 +147,7 @@ export default function UserLayout() {
           </div>
         </Wrapper>
       </div>
+      </PrivateRoute>
     </>
   );
 }

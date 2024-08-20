@@ -1,25 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppContext } from "../Features/AppContext";
+import { useCartContext } from "../Features/CartContext";
 import { useWishListContext } from "../Features/WishListContext";
 import Wrapper from "./Wrapper";
 import axiosConfig from "../Utils/axiosConfig";
 import { notify } from "../Utils/Helper";
+import Logo from "../Components/Images/Logo.svg";
 
 import Menu from "./Menu";
 import MenuMobile from "./MenuMobile";
 
 import { IoMdHeartEmpty } from "react-icons/io";
-import { LuUserCircle } from "react-icons/lu";
+import { LuLogIn, LuLogOut, LuUserCircle } from "react-icons/lu";
 import { BsCart } from "react-icons/bs";
 import { BiMenuAltRight } from "react-icons/bi";
 import { VscChromeClose } from "react-icons/vsc";
-
 import "react-toastify/dist/ReactToastify.css";
-import { useCartContext } from "../Features/CartContext";
 
 export default function Header() {
+  const { user, setUser, setIsLoading } = useAppContext();
   const { wishListItems } = useWishListContext();
   const { cartItems } = useCartContext();
+
+  const navigate = useNavigate();
 
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showCatMenu, setShowCatMenu] = useState(false);
@@ -46,6 +50,30 @@ export default function Header() {
       window.removeEventListener("scroll", controlNavbar);
     };
   }, [controlNavbar]);
+
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosConfig.get(`/api/auth/sign-out`);
+      if (response) {
+        notify("Sign out successful.", "success");
+        setUser(null);
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("refresh_token");
+        navigate("/sign-in");
+      }
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -74,7 +102,7 @@ export default function Header() {
     >
       <Wrapper className="h-[60px] flex justify-between items-center">
         <Link to="/">
-          <img src="/logo.svg" className="w-[60px]" alt="logo" />
+          <img src={Logo} className="w-[40px]" alt="logo" />
         </Link>
 
         <Menu
@@ -120,11 +148,25 @@ export default function Header() {
           {/* Icon end */}
 
           {/* Icon start */}
-          <Link to="/account">
-            <div className="w-12 h-12 rounded-full flex justify-center items-center hover:bg-black/[0.05] cursor-pointer relative">
-              <LuUserCircle className="text-[20px]" />
+          {user ? (
+            <>
+            <Link to="/account">
+              <div className="w-12 h-12 rounded-full flex justify-center items-center hover:bg-black/[0.05] cursor-pointer relative">
+                <LuUserCircle className="text-[20px]" />
+              </div>
+            </Link>
+            <div className="w-12 h-12 rounded-full flex justify-center items-center hover:bg-black/[0.05] cursor-pointer relative"
+            onClick={handleSignOut}>
+              <LuLogOut className="text-[20px]" />
             </div>
-          </Link>
+          </>
+          ) : (
+            <Link to="/sign-in">
+              <div className="w-12 h-12 rounded-full flex justify-center items-center hover:bg-black/[0.05] cursor-pointer relative">
+                <LuLogIn className="text-[20px]" />
+              </div>
+            </Link>
+          )}
           {/* Icon end */}
 
           {/* Mobile icon start */}
