@@ -137,8 +137,19 @@ public class WishlistService implements IWishlistService {
 
     @Override
     public WishlistResponseDTO getWishlistByUserId(UUID userId, String searchVal) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
+
         Wishlist wishlist = wishlistRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Wishlist Not Found for User!!!"));
+                .orElseGet(() -> {
+                    Wishlist newWishlist = new Wishlist();
+                    newWishlist.setUser(user);
+                    newWishlist.setProducts(new ArrayList<>());
+                    return newWishlist;
+                });
+
+        wishlist = wishlistRepository.save(wishlist);
+
         List<Product> products = wishlist.getProducts();
         if (searchVal != null && !searchVal.isBlank()) {
             // Filter products based on search value
