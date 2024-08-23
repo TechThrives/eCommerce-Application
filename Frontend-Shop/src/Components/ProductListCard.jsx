@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useWishListContext } from "../Features/WishListContext";
 import { getDiscountedPricePercentage, notify } from "../Utils/Helper";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
-import { FaCartArrowDown } from "react-icons/fa";
+import { MdOutlineRemoveShoppingCart, MdOutlineShoppingCart } from "react-icons/md";
 import { useCartContext } from "../Features/CartContext";
 
 const ProductListCard = ({ product }) => {
@@ -86,12 +86,19 @@ const ProductListCard = ({ product }) => {
             <div className="mt-4">
               <div
                 onClick={handleClick}
-                className="py-2 px-5 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-stone-950 text-white rounded-md"
+                className="py-2 px-2 inline-block font-semibold tracking-wide align-middle duration-500 text-base text-center bg-stone-950 text-white rounded-md"
               >
-                <FaCartArrowDown
-                  className="text-[15px] md:text-[20px]"
+                {isInCart ? (
+                  <MdOutlineRemoveShoppingCart
+                  className="text-[20px]"
                   style={{ fill: "#ffffff" }}
                 />
+                ) : (
+                  <MdOutlineShoppingCart
+                  className="text-[20px]"
+                  style={{ fill: "#ffffff" }}
+                />
+                )}
               </div>
             </div>
           </div>

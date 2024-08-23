@@ -246,10 +246,10 @@ export default function SignUp() {
 
                   <input
                     name="phoneNumber"
-                    type="text"
+                    type="number"
                     onChange={handleChange}
                     value={userData.phoneNumber}
-                    className="bg-gray-100 text-gray-800 text-sm px-4 py-3.5 rounded-r-md focus:bg-transparent outline-blue-500 transition-all flex-1"
+                    className="bg-gray-100 text-gray-800 text-sm px-4 py-3.5 rounded-r-md focus:bg-transparent outline-blue-500 transition-all flex-1 appearance-none"
                     placeholder="Enter phone number"
                   />
                 </div>

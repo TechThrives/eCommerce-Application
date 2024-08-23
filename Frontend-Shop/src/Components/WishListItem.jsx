@@ -11,13 +11,13 @@ const WishListItem = ({ item }) => {
     <div className="flex py-5 gap-3 md:gap-5 border-b">
       {/* IMAGE START */}
       <div className="shrink-0 aspect-square w-[70px] md:w-[140px]">
-        <img src={item.image} alt={item.name} width={150} height={150} />
+        <img src={item.imageUrls[0]} alt={item.name} width={150} height={150} />
       </div>
       {/* IMAGE END */}
 
       <div className="w-full flex flex-col">
         <Link
-          to={`/product/${item.id}`}
+          to={`/product/${item.slug}`}
           className="flex flex-col md:flex-row justify-between"
         >
           {/* PRODUCT TITLE */}

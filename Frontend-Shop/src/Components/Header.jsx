@@ -12,7 +12,7 @@ import Menu from "./Menu";
 import MenuMobile from "./MenuMobile";
 
 import { IoMdHeartEmpty } from "react-icons/io";
-import { LuLogIn, LuLogOut, LuUserCircle } from "react-icons/lu";
+import { LuLogOut, LuUserCircle } from "react-icons/lu";
 import { BsCart } from "react-icons/bs";
 import { BiMenuAltRight } from "react-icons/bi";
 import { VscChromeClose } from "react-icons/vsc";
@@ -163,7 +163,7 @@ export default function Header() {
           ) : (
             <Link to="/sign-in">
               <div className="w-12 h-12 rounded-full flex justify-center items-center hover:bg-black/[0.05] cursor-pointer relative">
-                <LuLogIn className="text-[20px]" />
+                <LuUserCircle className="text-[20px]" />
               </div>
             </Link>
           )}

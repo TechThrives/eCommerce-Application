@@ -26,6 +26,9 @@ import { ToastContainer } from "react-toastify";
 import ProductReviews from "./Pages/ProductReviews";
 import ViewInvoice from "./Pages/User/ViewInvoice";
 
+// Private Route
+import PrivateRoute from "./Utils/PrivateRoute";
+
 export default function App() {
   return (
     <Router>
@@ -50,7 +53,7 @@ export default function App() {
                 <Route path="/shop" element={<Shop />} />
                 <Route path="/wishlist" element={<WishList />} />
                 <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
                 <Route path="/payment-failed" element={<PaymentFailed />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/category/:categorySlug" element={<Category />} />

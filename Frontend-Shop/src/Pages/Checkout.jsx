@@ -4,14 +4,10 @@ import Wrapper from "../Components/Wrapper";
 import { useCartContext } from "../Features/CartContext";
 import EmptyCart from "../Components/Images/empty-wishlist.png";
 import { notify } from "../Utils/Helper";
+import { useAppContext } from "../Features/AppContext";
 
 export default function Checkout() {
-  const authUser = {
-    first_name: "Jon",
-    last_name: "Due",
-    email: "jonhdou@gmail.com",
-    mobile_number: "1234567890",
-  };
+  const { user } = useAppContext();
 
   const [additionInfo, setAdditionInfo] = useState({});
   const { cartItems } = useCartContext();
@@ -26,10 +22,10 @@ export default function Checkout() {
       }, 2000);
     }
     setAdditionInfo({
-      first_name: authUser.first_name,
-      last_name: authUser.last_name,
-      email: authUser.email,
-      mobile_number: authUser.mobile_number,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      email: user.email,
+      mobile_number: user.phoneNumber,
     });
   }, []);
 
@@ -81,6 +77,7 @@ export default function Checkout() {
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
+                      disabled
                     />
                     <label
                       htmlFor="first_name"
@@ -100,6 +97,7 @@ export default function Checkout() {
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
+                      disabled
                     />
                     <label
                       htmlFor="last_name"
@@ -114,12 +112,12 @@ export default function Checkout() {
                       type="text"
                       id="email"
                       name="email"
-                      disabled
                       value={additionInfo.email}
                       onChange={handleChange}
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
+                      disabled
                     />
                     <label
                       htmlFor="email"
@@ -139,6 +137,7 @@ export default function Checkout() {
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
+                      disabled
                     />
                     <label
                       htmlFor="mobile_number"

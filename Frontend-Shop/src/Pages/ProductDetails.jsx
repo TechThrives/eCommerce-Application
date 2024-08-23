@@ -147,7 +147,8 @@ const ProductDetails = () => {
     setActiveTab(1);
     fetchProduct();
   }, [productSlug]);
-
+  
+  const isInWishlist = wishListItems.wishList.some((item) => item.id === productDetails.id);
   const handleWishListClick = (item) => {
     const { id, name, shortDescription, image, price, originalPrice } = item;
     const payloadToAdd = {
@@ -158,7 +159,6 @@ const ProductDetails = () => {
       price,
       originalPrice,
     };
-    const isInWishlist = wishListItems.wishList.some((item) => item.id === id);
     if (isInWishlist) {
       wishListDispatch({ type: "REMOVE_FROM_WISHLIST", payload: payloadToAdd });
       notify("Product removed from wishlist", "success");
@@ -168,6 +168,7 @@ const ProductDetails = () => {
     }
   };
 
+  const isInCartList = cartItems.cart.some((item) => item.id === productDetails.id);
   const handleCartClick = (item) => {
     const { id, name, shortDescription, image, price, originalPrice } = item;
     const payloadToAdd = {
@@ -178,7 +179,6 @@ const ProductDetails = () => {
       price,
       originalPrice,
     };
-    const isInCartList = cartItems.cart.some((item) => item.id === id);
     if (isInCartList) {
       cartDispatch({ type: "REMOVE_FROM_CART", payload: payloadToAdd });
       notify("Product removed from cart", "success");
@@ -344,7 +344,7 @@ const ProductDetails = () => {
                     className="w-48 py-4 rounded-full bg-black text-white text-md font-medium transition-transform active:scale-95 my-3 hover:opacity-75 flex items-center gap-2 justify-center"
                     onClick={() => handleCartClick(productDetails)}
                   >
-                    Add to Cart
+                    {isInCartList ? "Remove from Cart" : "Add to Cart"}
                   </button>
                   {/* ADD TO CART BUTTON END */}
                   {/* WHISHLIST BUTTON START */}
@@ -352,7 +352,9 @@ const ProductDetails = () => {
                     onClick={() => handleWishListClick(productDetails)}
                     className="w-48 py-4 rounded-full border border-black text-md font-medium transition-transform active:scale-95 flex items-center justify-center gap-2 hover:opacity-75"
                   >
-                    Add to Wishlist
+                    {isInWishlist
+                      ? "Remove from Whishlist"
+                      : "Add to Whishlist"}
                   </button>
                   {/* WHISHLIST BUTTON END */}
                 </div>
@@ -459,11 +461,13 @@ const ProductDetails = () => {
                             </div>
                           ))}
                           <button
-                        onClick={() => navigate(`/product-reviews/${productSlug}`)}
-                        className="w-32 py-2 mt-4 rounded-md bg-black text-white text-md font-medium transition-transform active:scale-95 hover:opacity-75"
-                      >
-                        View All
-                      </button>
+                            onClick={() =>
+                              navigate(`/product-reviews/${productSlug}`)
+                            }
+                            className="w-32 py-2 mt-4 rounded-md bg-black text-white text-md font-medium transition-transform active:scale-95 hover:opacity-75"
+                          >
+                            View All
+                          </button>
                         </>
                       ) : (
                         <p className="text-center text-lg font-semibold">

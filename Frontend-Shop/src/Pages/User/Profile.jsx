@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useAppContext } from "../../Features/AppContext";
 
 export default function Profile() {
-  const authUser = {
-    first_name: "Jon",
-    last_name: "Due",
-    email: "jonhdou@gmail.com",
-    mobile_number: "1234567890",
-    address: "none",
-    state: "none",
-    country: "none",
-    pincode: "none",
-  };
+  const { user } = useAppContext();
   const [additionInfo, setAdditionInfo] = useState({});
   useEffect(() => {
     setAdditionInfo({
-      first_name: authUser.first_name,
-      last_name: authUser.last_name,
-      email: authUser.email,
-      mobile_number: authUser.mobile_number,
-      address: authUser.address,
-      state: authUser.state,
-      country: authUser.country,
-      pincode: authUser.pincode,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      email: user.email,
+      mobile_number: user.phoneNumber,
+      address: user.address,
+      state: user.state,
+      country: user.country,
+      pincode: user.pincode,
     });
   }, []);
   const handleChange = (e) => {
@@ -114,8 +106,8 @@ export default function Profile() {
                   </div>
                 </div>
               </section>
-              <hr className="my-6 border-gray-300" /> {/* Horizontal line */}
-              <section className="flex-[2]">
+              {/* <hr className="my-6 border-gray-300" /> */}
+              {/* <section className="flex-[2]">
                 <h2 className="text-lg font-bold">Address Information</h2>
                 <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
                   <div className="relative md:col-span-2">
@@ -194,7 +186,7 @@ export default function Profile() {
                     </label>
                   </div>
                 </div>
-              </section>
+              </section> */}
               <div className="flex justify-end">
                 <button
                   type="submit"

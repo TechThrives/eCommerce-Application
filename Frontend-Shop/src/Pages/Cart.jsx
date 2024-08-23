@@ -4,8 +4,10 @@ import Wrapper from "../Components/Wrapper";
 import CartItem from "../Components/CartItem";
 import { useCartContext } from "../Features/CartContext";
 import EmptyCart from "../Components/Images/empty-wishlist.png";
+import { useAppContext } from "../Features/AppContext";
 
 export default function Cart() {
+  const { user } = useAppContext();
   const { cartItems } = useCartContext();
 
   const subTotal = useMemo(() => {
@@ -58,14 +60,25 @@ export default function Cart() {
                 </div>
 
                 {/* Checkout Btn */}
-                <Link
-                  to="/checkout"
-                  className="flex flex-col justify-between items-center"
-                >
-                  <button className="w-1/2 justify-center gap-5 lg:w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75">
-                    Checkout
-                  </button>
-                </Link>
+                {user ? (
+                  <Link
+                    to="/checkout"
+                    className="flex flex-col justify-between items-center"
+                  >
+                    <button className="w-1/2 justify-center gap-5 lg:w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75">
+                      Checkout
+                    </button>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/sign-in"
+                    className="flex flex-col justify-between items-center"
+                  >
+                    <button className="w-1/2 justify-center gap-5 lg:w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75">
+                      Login to Checkout
+                    </button>
+                  </Link>
+                )}
               </section>
             </div>
           </>
@@ -93,7 +106,7 @@ export default function Cart() {
               {/* Link to homepage */}
               <Link
                 className="py-4 px-8 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 mt-8"
-                to="/"
+                to="/shop"
               >
                 Continue Shopping
               </Link>

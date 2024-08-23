@@ -25,7 +25,7 @@ export default function WishList() {
               ))}
             </div>
 
-            <Link to="/" className="flex justify-center">
+            <Link to="/shop" className="flex justify-center">
               <button className="w-48 py-4 rounded-full bg-black text-white text-md font-medium transition-transform active:scale-95 my-3 hover:opacity-75 flex items-center gap-2 justify-center">
                 Continue Shopping
               </button>
@@ -47,7 +47,7 @@ export default function WishList() {
               Go ahead and explore top categories.
             </span>
             <Link
-              to="/"
+              to="/shop"
               className="py-4 px-8 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 mt-8"
             >
               Continue Shopping
