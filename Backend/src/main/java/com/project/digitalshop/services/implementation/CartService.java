@@ -137,8 +137,19 @@ public class CartService implements ICartService {
 
     @Override
     public CartResponseDTO getCartByUserId(UUID userId, String searchVal) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
+
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Cart Not Found for User!!!"));
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    newCart.setProducts(new ArrayList<>());
+                    return newCart;
+                });
+        
+        cart = cartRepository.save(cart);
+
         List<Product> products = cart.getProducts();
         if (searchVal != null && !searchVal.isBlank()) {
             // Filter products based on search value
