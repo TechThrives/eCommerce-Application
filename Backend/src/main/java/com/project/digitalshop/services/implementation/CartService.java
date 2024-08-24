@@ -106,16 +106,10 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public CartResponseDTO getCartById(UUID cartId, String searchVal) {
+    public CartResponseDTO getCartById(UUID cartId) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new NotFoundException("Cart Not Found!!!"));
         List<Product> products = cart.getProducts();
-        if (searchVal != null && !searchVal.isBlank()) {
-            // Filter products based on search value
-            products = cart.getProducts().stream()
-                    .filter(product -> product.getName().toLowerCase().contains(searchVal.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
         // Calculate product count
         int productCount = cart.getProductCount();
         CartResponseDTO cartResponseDTO = new CartResponseDTO();
@@ -136,7 +130,7 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public CartResponseDTO getCartByUserId(UUID userId, String searchVal) {
+    public CartResponseDTO getCartByUserId(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
 
@@ -151,12 +145,6 @@ public class CartService implements ICartService {
         cart = cartRepository.save(cart);
 
         List<Product> products = cart.getProducts();
-        if (searchVal != null && !searchVal.isBlank()) {
-            // Filter products based on search value
-            products = cart.getProducts().stream()
-                    .filter(product -> product.getName().toLowerCase().contains(searchVal.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
         // Calculate product count
         int productCount = cart.getProductCount();
         CartResponseDTO cartResponseDTO = new CartResponseDTO();

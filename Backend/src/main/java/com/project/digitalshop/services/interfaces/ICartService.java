@@ -16,7 +16,7 @@ public interface ICartService {
 
     void deleteCart(UUID cartId);
 
-    CartResponseDTO getCartById(UUID cartId, String searchVal);
+    CartResponseDTO getCartById(UUID cartId);
 
-    CartResponseDTO getCartByUserId(UUID userId, String searchVal);
+    CartResponseDTO getCartByUserId(UUID userId);
 }

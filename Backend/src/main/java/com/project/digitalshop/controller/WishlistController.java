@@ -50,16 +50,14 @@ public class WishlistController {
     }
 
     @GetMapping("/{wishlistId}")
-    public ResponseEntity<WishlistResponseDTO> getWishlistById(@PathVariable UUID wishlistId,
-            @RequestParam(required = false) String searchVal) {
-        WishlistResponseDTO wishlistResponseDTO = wishlistService.getWishlistById(wishlistId, searchVal);
+    public ResponseEntity<WishlistResponseDTO> getWishlistById(@PathVariable UUID wishlistId) {
+        WishlistResponseDTO wishlistResponseDTO = wishlistService.getWishlistById(wishlistId);
         return ResponseEntity.status(HttpStatus.OK).body(wishlistResponseDTO);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<WishlistResponseDTO> getWishlistByUserId(@PathVariable UUID userId,
-            @RequestParam(required = false) String searchVal) {
-        WishlistResponseDTO wishlistResponseDTO = wishlistService.getWishlistByUserId(userId, searchVal);
+    public ResponseEntity<WishlistResponseDTO> getWishlistByUserId(@PathVariable UUID userId) {
+        WishlistResponseDTO wishlistResponseDTO = wishlistService.getWishlistByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(wishlistResponseDTO);
     }
 }

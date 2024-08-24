@@ -50,16 +50,14 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}")
-    public ResponseEntity<CartResponseDTO> getCartById(@PathVariable UUID cartId,
-            @RequestParam(required = false) String searchVal) {
-        CartResponseDTO cartResponseDTO = cartService.getCartById(cartId, searchVal);
+    public ResponseEntity<CartResponseDTO> getCartById(@PathVariable UUID cartId) {
+        CartResponseDTO cartResponseDTO = cartService.getCartById(cartId);
         return ResponseEntity.status(HttpStatus.OK).body(cartResponseDTO);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CartResponseDTO> getCartByUserId(@PathVariable UUID userId,
-            @RequestParam(required = false) String searchVal) {
-        CartResponseDTO cartResponseDTO = cartService.getCartByUserId(userId, searchVal);
+    public ResponseEntity<CartResponseDTO> getCartByUserId(@PathVariable UUID userId) {
+        CartResponseDTO cartResponseDTO = cartService.getCartByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(cartResponseDTO);
     }
 }

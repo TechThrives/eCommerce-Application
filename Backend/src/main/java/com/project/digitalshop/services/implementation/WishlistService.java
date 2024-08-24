@@ -106,16 +106,10 @@ public class WishlistService implements IWishlistService {
     }
 
     @Override
-    public WishlistResponseDTO getWishlistById(UUID wishlistId, String searchVal) {
+    public WishlistResponseDTO getWishlistById(UUID wishlistId) {
         Wishlist wishlist = wishlistRepository.findById(wishlistId)
                 .orElseThrow(() -> new NotFoundException("Wishlist Not Found!!!"));
         List<Product> products = wishlist.getProducts();
-        if (searchVal != null && !searchVal.isBlank()) {
-            // Filter products based on search value
-            products = wishlist.getProducts().stream()
-                    .filter(product -> product.getName().toLowerCase().contains(searchVal.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
         // Calculate product count
         int productCount = wishlist.getProductCount();
         WishlistResponseDTO wishlistResponseDTO = new WishlistResponseDTO();
@@ -136,7 +130,7 @@ public class WishlistService implements IWishlistService {
     }
 
     @Override
-    public WishlistResponseDTO getWishlistByUserId(UUID userId, String searchVal) {
+    public WishlistResponseDTO getWishlistByUserId(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
 
@@ -151,12 +145,6 @@ public class WishlistService implements IWishlistService {
         wishlist = wishlistRepository.save(wishlist);
 
         List<Product> products = wishlist.getProducts();
-        if (searchVal != null && !searchVal.isBlank()) {
-            // Filter products based on search value
-            products = wishlist.getProducts().stream()
-                    .filter(product -> product.getName().toLowerCase().contains(searchVal.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
         // Calculate product count
         int productCount = wishlist.getProductCount();
         WishlistResponseDTO wishlistResponseDTO = new WishlistResponseDTO();
