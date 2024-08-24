@@ -28,7 +28,9 @@ const cartReducer = (state, action) => {
         itemCount: updatedCart.length,
       };
     case "REMOVE_FROM_CART":
-      const filteredCart = state.cart.filter((item) => item.id !== action.payload.id);
+      const filteredCart = state.cart.filter(
+        (item) => item.id !== action.payload.id
+      );
       localStorage.setItem("cart", JSON.stringify(filteredCart));
       if (state.userId) {
         removeProductFromBackend(state.userId, action.payload.id); // Remove single product from backend
@@ -41,8 +43,13 @@ const cartReducer = (state, action) => {
     case "SET_CART":
       return {
         ...state,
-        cart: action.payload.cart,
-        itemCount: action.payload.cart.length,
+        cart: action.payload.products,
+        itemCount: action.payload.productCount,
+      };
+    case "SET_USER":
+      return {
+        ...state,
+        userId: action.payload,
       };
     default:
       return state;
@@ -62,13 +69,26 @@ export const CartProvider = ({ children }) => {
       axiosConfig
         .get(`/api/carts/user/${user.id}`)
         .then((response) => {
-          cartDispatch({ type: "SET_CART", payload: { cart: response.data.products } });
+          localStorage.setItem("cart", JSON.stringify(response.data.products));
+          cartDispatch({
+            type: "SET_CART",
+            payload: {
+              products: response.data.products,
+              productCount: response.data.productCount,
+            },
+          });
         })
         .catch((error) => {
           handleBackendError(error);
         });
+    } else {
+      cartDispatch({ type: "SET_USER", payload: null });
     }
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems.cart));
+  }, [cartItems]);
 
   return (
     <CartContext.Provider value={{ cartItems, cartDispatch }}>
@@ -81,7 +101,6 @@ const saveProductToBackend = async (userId, productId) => {
   try {
     const cartDTO = { userId, productId };
     await axiosConfig.post(`/api/carts/add`, cartDTO);
-    console.log("Product saved to backend successfully");
   } catch (error) {
     handleBackendError(error);
   }
@@ -91,7 +110,6 @@ const removeProductFromBackend = async (userId, productId) => {
   try {
     const cartDTO = { userId, productId };
     await axiosConfig.post(`/api/carts/remove`, cartDTO);
-    console.log("Product removed from backend successfully");
   } catch (error) {
     handleBackendError(error);
   }

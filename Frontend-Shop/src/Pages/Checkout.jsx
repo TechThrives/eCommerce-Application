@@ -9,32 +9,21 @@ import { useAppContext } from "../Features/AppContext";
 export default function Checkout() {
   const { user } = useAppContext();
 
-  const [additionInfo, setAdditionInfo] = useState({});
+  const [additionInfo, setAdditionInfo] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    phoneNumber: user?.phoneNumber || "",
+  });
+
   const { cartItems } = useCartContext();
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (cartItems.itemCount <= 0) {
-      notify("Your cart is empty", "error");
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    }
-    setAdditionInfo({
-      first_name: user.firstName,
-      last_name: user.lastName,
-      email: user.email,
-      mobile_number: user.phoneNumber,
-    });
-  }, []);
 
   const subTotal = useMemo(() => {
     return cartItems.cart.reduce((total, item) => total + item.price, 0);
   }, [cartItems]);
 
   const tax = useMemo(() => {
-    return subTotal * 0.18;
+    return (subTotal * 0.18).toFixed(2)
   }, [subTotal]);
 
   const grandTotal = useMemo(() => {
@@ -43,10 +32,6 @@ export default function Checkout() {
 
   const handlePayment = async () => {
     console.log(additionInfo);
-  };
-
-  const handleChange = (e) => {
-    setAdditionInfo({ ...additionInfo, [e.target.name]: e.target.value });
   };
 
   return (
@@ -70,17 +55,16 @@ export default function Checkout() {
                   <div className="relative">
                     <input
                       type="text"
-                      id="first_name"
-                      name="first_name"
-                      value={additionInfo.first_name}
-                      onChange={handleChange}
+                      id="firstName"
+                      name="firstName"
+                      value={additionInfo.firstName}
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
                       disabled
                     />
                     <label
-                      htmlFor="first_name"
+                      htmlFor="firstName"
                       className="ml-1 absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4"
                     >
                       First Name
@@ -90,17 +74,16 @@ export default function Checkout() {
                   <div className="relative">
                     <input
                       type="text"
-                      id="last_name"
-                      name="last_name"
-                      value={additionInfo.last_name}
-                      onChange={handleChange}
+                      id="lastName"
+                      name="lastName"
+                      value={additionInfo.lastName}
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
                       disabled
                     />
                     <label
-                      htmlFor="last_name"
+                      htmlFor="lastName"
                       className="ml-1 absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4"
                     >
                       Last Name
@@ -113,7 +96,6 @@ export default function Checkout() {
                       id="email"
                       name="email"
                       value={additionInfo.email}
-                      onChange={handleChange}
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
@@ -130,20 +112,19 @@ export default function Checkout() {
                   <div className="relative">
                     <input
                       type="text"
-                      id="mobile_number"
-                      name="mobile_number"
-                      value={additionInfo.mobile_number}
-                      onChange={handleChange}
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      value={additionInfo.phoneNumber}
                       className="block px-2.5 pb-2.5 pt-4 w-full text-md text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-600 peer"
                       placeholder=" "
                       required
                       disabled
                     />
                     <label
-                      htmlFor="mobile_number"
+                      htmlFor="phoneNumber"
                       className="ml-1 absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4"
                     >
-                      Mobile Number
+                      Phone Number
                     </label>
                   </div>
                 </form>
@@ -190,8 +171,8 @@ export default function Checkout() {
                 <div className="flex flex-col justify-between items-center">
                   <button
                     onClick={handlePayment}
-                    className="w-1/2 justify-center gap-5 lg:w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75"
-                  >
+                    className="w-full justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
+                >
                     Purchase
                   </button>
                 </div>
@@ -221,8 +202,8 @@ export default function Checkout() {
 
               {/* Link to homepage */}
               <Link
-                className="py-4 px-8 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 mt-8"
-                to="/"
+                className="mt-4 w-full text-center justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
+                to="/shop"
               >
                 Continue Shopping
               </Link>

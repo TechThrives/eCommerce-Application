@@ -25,7 +25,7 @@ export default function NotFound() {
 
           {/* Link to homepage */}
           <Link
-            className="py-4 px-8 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 mt-8"
+            className="mt-4 w-full text-center justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
             to="/"
           >
             Go To Home

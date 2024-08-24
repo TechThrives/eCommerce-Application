@@ -65,7 +65,7 @@ export default function Cart() {
                     to="/checkout"
                     className="flex flex-col justify-between items-center"
                   >
-                    <button className="w-1/2 justify-center gap-5 lg:w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75">
+                    <button className="w-full justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none">
                       Checkout
                     </button>
                   </Link>
@@ -74,7 +74,7 @@ export default function Cart() {
                     to="/sign-in"
                     className="flex flex-col justify-between items-center"
                   >
-                    <button className="w-1/2 justify-center gap-5 lg:w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75">
+                    <button className="w-full justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none">
                       Login to Checkout
                     </button>
                   </Link>
@@ -105,7 +105,7 @@ export default function Cart() {
 
               {/* Link to homepage */}
               <Link
-                className="py-4 px-8 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 mt-8"
+                className="mt-4 w-full text-center justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
                 to="/shop"
               >
                 Continue Shopping

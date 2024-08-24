@@ -14,8 +14,9 @@ export const notify = (msg, type) => {
   switch (type) {
     case "error":
       toast.error(msg, {
-        position: "top-center",
-        autoClose: 5000,
+        className: "toast-base",
+        position: "bottom-left",
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -26,8 +27,9 @@ export const notify = (msg, type) => {
       break;
     case "warning":
       toast.warning(msg, {
-        position: "top-center",
-        autoClose: 5000,
+        className: "toast-base",
+        position: "bottom-left",
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -38,9 +40,10 @@ export const notify = (msg, type) => {
       break;
     case "success":
       toast.success(msg, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
+        className: "toast-base",
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

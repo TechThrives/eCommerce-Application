@@ -169,3 +169,9 @@ canvas {
       @apply bg-transparent;
   }
 }
+
+/* TOASTIFY */
+.toast-base {
+  font-size: small;
+  min-height: 10px !important;
+}

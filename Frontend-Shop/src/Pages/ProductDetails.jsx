@@ -147,8 +147,10 @@ const ProductDetails = () => {
     setActiveTab(1);
     fetchProduct();
   }, [productSlug]);
-  
-  const isInWishlist = wishListItems.wishList.some((item) => item.id === productDetails.id);
+
+  const isInWishlist = wishListItems.wishList.some(
+    (item) => item.id === productDetails.id
+  );
   const handleWishListClick = (item) => {
     const { id, name, shortDescription, image, price, originalPrice } = item;
     const payloadToAdd = {
@@ -168,7 +170,9 @@ const ProductDetails = () => {
     }
   };
 
-  const isInCartList = cartItems.cart.some((item) => item.id === productDetails.id);
+  const isInCartList = cartItems.cart.some(
+    (item) => item.id === productDetails.id
+  );
   const handleCartClick = (item) => {
     const { id, name, shortDescription, image, price, originalPrice } = item;
     const payloadToAdd = {
@@ -338,10 +342,10 @@ const ProductDetails = () => {
                   </ul>
                 </div>
 
-                <div className="flex flex-row items-center justify-start gap-2">
+                <div className="flex flex-row items-center justify-start gap-2 mt-4">
                   {/* ADD TO CART BUTTON START */}
                   <button
-                    className="w-48 py-4 rounded-full bg-black text-white text-md font-medium transition-transform active:scale-95 my-3 hover:opacity-75 flex items-center gap-2 justify-center"
+                    className="w-1/2 justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
                     onClick={() => handleCartClick(productDetails)}
                   >
                     {isInCartList ? "Remove from Cart" : "Add to Cart"}
@@ -349,8 +353,8 @@ const ProductDetails = () => {
                   {/* ADD TO CART BUTTON END */}
                   {/* WHISHLIST BUTTON START */}
                   <button
+                    className="w-1/2 justify-center py-3.5 px-7 text-sm font-semibold tracking-wider rounded-md text-white bg-stone-900 hover:bg-stone-950 focus:outline-none"
                     onClick={() => handleWishListClick(productDetails)}
-                    className="w-48 py-4 rounded-full border border-black text-md font-medium transition-transform active:scale-95 flex items-center justify-center gap-2 hover:opacity-75"
                   >
                     {isInWishlist
                       ? "Remove from Whishlist"

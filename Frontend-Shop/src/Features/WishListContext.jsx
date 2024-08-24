@@ -43,8 +43,13 @@ const wishListReducer = (state, action) => {
     case "SET_WISHLIST":
       return {
         ...state,
-        wishList: action.payload.wishList,
-        itemCount: action.payload.wishList.length,
+        wishList: action.payload.products,
+        itemCount: action.payload.productCount,
+      };
+    case "SET_USER":
+      return {
+        ...state,
+        userId: action.payload,
       };
     default:
       return state;
@@ -64,14 +69,29 @@ export const WishListProvider = ({ children }) => {
       axiosConfig
         .get(`/api/wishlists/user/${user.id}`)
         .then((response) => {
-          wishListDispatch({ type: "SET_WISHLIST", payload: { wishList: response.data.products } });
-          localStorage.setItem("wishList", JSON.stringify(response.data.products));
+          localStorage.setItem(
+            "wishList",
+            JSON.stringify(response.data.products)
+          );
+          wishListDispatch({
+            type: "SET_WISHLIST",
+            payload: {
+              products: response.data.products,
+              productCount: response.data.productCount,
+            },
+          });
         })
         .catch((error) => {
           handleBackendError(error);
         });
+    } else {
+      wishListDispatch({ type: "SET_USER", payload: null });
     }
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem("wishList", JSON.stringify(wishListItems.wishList));
+  }, [wishListItems]);
 
   return (
     <WishListContext.Provider value={{ wishListItems, wishListDispatch }}>
@@ -87,7 +107,6 @@ const saveProductToBackend = async (userId, productId) => {
       productId,
     };
     await axiosConfig.post(`/api/wishlists/add`, wishListDTO);
-    console.log("Product saved to backend successfully");
   } catch (error) {
     handleBackendError(error);
   }
@@ -100,7 +119,6 @@ const removeProductFromBackend = async (userId, productId) => {
       productId,
     };
     await axiosConfig.post(`/api/wishlists/remove`, wishListDTO);
-    console.log("Product removed from backend successfully");
   } catch (error) {
     handleBackendError(error);
   }
