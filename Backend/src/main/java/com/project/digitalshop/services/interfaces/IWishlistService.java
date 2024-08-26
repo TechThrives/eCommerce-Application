@@ -17,7 +17,7 @@ public interface IWishlistService {
 
     void deleteWishlist(UUID wishlistId);
 
-    WishlistResponseDTO getWishlistById(UUID wishlistId, String searchVal);
+    WishlistResponseDTO getWishlistById(UUID wishlistId);
 
-    WishlistResponseDTO getWishlistByUserId(UUID userId, String searchVal);
+    WishlistResponseDTO getWishlistByUserId(UUID userId);
 }

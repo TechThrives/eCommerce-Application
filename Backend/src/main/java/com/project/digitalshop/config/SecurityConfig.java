@@ -58,13 +58,9 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.GET, "/api/products/top/*").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/categories/slug/*").permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/api/categories/all").permitAll()
-                                                .requestMatchers(HttpMethod.DELETE, "/api/reviews/*").permitAll() // TODO: Add permission
                                                 .requestMatchers(HttpMethod.GET, "/api/reviews/product/slug/*").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/api/reviews/product-summary/slug/*").permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/api/reviews/user/*").permitAll() // TODO: Add permission
-                                                .requestMatchers(HttpMethod.DELETE, "/api/invoices/*").permitAll() // TODO: Add permission
-                                                .requestMatchers(HttpMethod.GET, "/api/invoices/user/*").permitAll() // TODO: Add permission
+                                                .requestMatchers(HttpMethod.GET, "/api/categories/all").permitAll()
                                                 .anyRequest().authenticated())
                                 .userDetailsService(userDetailsService)
                                 .sessionManagement(session -> session
