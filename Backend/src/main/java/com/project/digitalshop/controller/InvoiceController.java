@@ -10,16 +10,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.digitalshop.dto.checkout.Checkout;
 import com.project.digitalshop.dto.invoice.InvoiceDTO;
 import com.project.digitalshop.dto.invoice.InvoiceResponseDTO;
-import com.project.digitalshop.dto.invoice.InvoiceUpdateDTO;
 import com.project.digitalshop.services.interfaces.IInvoiceService;
+import com.project.digitalshop.services.interfaces.IStripeService;
+import com.stripe.exception.StripeException;
 
 import jakarta.validation.Valid;
 
@@ -29,22 +30,19 @@ import jakarta.validation.Valid;
 public class InvoiceController {
 
     private final IInvoiceService invoiceService;
+    private final IStripeService stripeService;
 
-    public InvoiceController(IInvoiceService invoiceService) {
+
+    public InvoiceController(IInvoiceService invoiceService, IStripeService stripeService) {
         this.invoiceService = invoiceService;
+        this.stripeService = stripeService;
     }
 
     @PostMapping
-    public ResponseEntity<InvoiceResponseDTO> createInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
+    public ResponseEntity<InvoiceResponseDTO> createInvoice(@Valid @RequestBody Checkout checkout) throws StripeException {
+        InvoiceDTO invoiceDTO = stripeService.getInvoice(checkout);
         InvoiceResponseDTO createdInvoice = invoiceService.createInvoice(invoiceDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdInvoice);
-    }
-
-    @PutMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceResponseDTO> updateInvoice(@PathVariable UUID invoiceId,
-            @Valid @RequestBody InvoiceUpdateDTO invoiceUpdateDTO) {
-        InvoiceResponseDTO updatedInvoice = invoiceService.updateInvoice(invoiceId, invoiceUpdateDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedInvoice);
     }
 
     @DeleteMapping("/{invoiceId}")

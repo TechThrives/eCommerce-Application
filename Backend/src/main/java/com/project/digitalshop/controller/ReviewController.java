@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.digitalshop.dto.review.ProductReviewSummaryDTO;
 import com.project.digitalshop.dto.review.ReviewDTO;
-import com.project.digitalshop.dto.review.ReviewDistributionDTO;
 import com.project.digitalshop.dto.review.ReviewResponseDTO;
 import com.project.digitalshop.dto.review.ReviewUpdateDTO;
 import com.project.digitalshop.services.interfaces.IReviewService;
