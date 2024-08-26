@@ -17,7 +17,6 @@ import Shop from "./Pages/Shop";
 import Cart from "./Pages/Cart";
 import { CartProvider } from "./Features/CartContext";
 import Checkout from "./Pages/Checkout";
-import PaymentFailed from "./Pages/PaymentFailed";
 import PaymentSuccess from "./Pages/PaymentSuccess";
 import NotFound from "./Pages/NotFound";
 import SignIn from "./Pages/SignIn";
@@ -54,8 +53,7 @@ export default function App() {
                 <Route path="/wishlist" element={<WishList />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
-                <Route path="/payment-failed" element={<PaymentFailed />} />
-                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/payment-success" element={<PrivateRoute><PaymentSuccess /></PrivateRoute>} />
                 <Route path="/category/:categorySlug" element={<Category />} />
                 <Route path="/product/:productSlug" element={<ProductDetails />} />
                 <Route path="/product-reviews/:productSlug" element={<ProductReviews />} />
