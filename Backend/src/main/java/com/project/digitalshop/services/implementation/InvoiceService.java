@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.project.digitalshop.dto.invoice.InvoiceDTO;
-import com.project.digitalshop.dto.invoice.InvoiceUpdateDTO;
 import com.project.digitalshop.dto.invoice.InvoiceUserDTO;
 import com.project.digitalshop.dto.invoice.InvoiceResponseDTO;
 import com.project.digitalshop.dto.category.CategoryProductDTO;
@@ -46,6 +45,7 @@ public class InvoiceService implements IInvoiceService {
     @Override
     public InvoiceResponseDTO createInvoice(@Valid InvoiceDTO invoiceDTO) {
         Invoice invoice = new Invoice();
+        invoice.setSessionId(invoiceDTO.getSessionId());
         User user = userRepository.findById(invoiceDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException("User Not Found!!!"));
         invoice.setUser(user);
@@ -56,38 +56,22 @@ public class InvoiceService implements IInvoiceService {
         invoice.setSubTotal(invoiceDTO.getSubTotal());
         invoice.setTax(invoiceDTO.getTax());
         invoice.setTotalPrice(invoiceDTO.getTotalPrice());
+
+        // Update Invoice
+        invoice.setPaymentStatus(invoiceDTO.getPaymentStatus());
+        invoice.setPaymentMethod(invoiceDTO.getPaymentMethod());
         invoice = invoiceRepository.save(invoice);
+
+        // Clear user cart
+        user.getCart().getProducts().clear();
+        userRepository.save(user);
+
         InvoiceResponseDTO invoiceResponseDTO = new InvoiceResponseDTO();
         BeanUtils.copyProperties(invoice, invoiceResponseDTO, "products", "user");
         InvoiceUserDTO invoiceUserDTO = new InvoiceUserDTO();
         BeanUtils.copyProperties(invoice.getUser(), invoiceUserDTO);
         invoiceResponseDTO.setUser(invoiceUserDTO);
         invoiceResponseDTO.setProducts(invoice.getProducts().stream().map(product -> {
-            ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-            BeanUtils.copyProperties(product, productResponseDTO);
-
-            // Map Category to CategoryDTO
-            CategoryProductDTO categoryDTO = new CategoryProductDTO();
-            BeanUtils.copyProperties(product.getCategory(), categoryDTO);
-            productResponseDTO.setCategory(categoryDTO);
-            return productResponseDTO;
-        }).collect(Collectors.toList()));
-        return invoiceResponseDTO;
-    }
-
-    @Override
-    public InvoiceResponseDTO updateInvoice(UUID invoiceId, @Valid InvoiceUpdateDTO invoiceUpdateDTO) {
-        Invoice existingInvoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new NotFoundException("Invoice Not Found!!!"));
-        existingInvoice.setPaymentStatus(invoiceUpdateDTO.getPaymentStatus());
-        existingInvoice.setPaymentMethod(invoiceUpdateDTO.getPaymentMethod());
-        invoiceRepository.save(existingInvoice);
-        InvoiceResponseDTO invoiceResponseDTO = new InvoiceResponseDTO();
-        BeanUtils.copyProperties(existingInvoice, invoiceResponseDTO, "products", "user");
-        InvoiceUserDTO invoiceUserDTO = new InvoiceUserDTO();
-        BeanUtils.copyProperties(existingInvoice.getUser(), invoiceUserDTO);
-        invoiceResponseDTO.setUser(invoiceUserDTO);
-        invoiceResponseDTO.setProducts(existingInvoice.getProducts().stream().map(product -> {
             ProductResponseDTO productResponseDTO = new ProductResponseDTO();
             BeanUtils.copyProperties(product, productResponseDTO);
 

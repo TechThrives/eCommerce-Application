@@ -1,8 +1,8 @@
 package com.project.digitalshop.model;
 
 public enum PaymentMethod {
-    CASH,
-    CREDIT_CARD,
-    UPI,
+    CARD,
+    GOOGLE_PAY,
+    AMAZON_PAY,
     NONE
 }

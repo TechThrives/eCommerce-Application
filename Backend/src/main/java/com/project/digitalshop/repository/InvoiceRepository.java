@@ -1,6 +1,7 @@
 package com.project.digitalshop.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -18,4 +19,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
     Page<Invoice> findAllByUserId(UUID userId, Pageable pageable);
 
     List<Invoice> findByProductsContains(Product product);
+
+    Optional<Invoice> findBySessionId(String sessionId);
 }

@@ -29,6 +29,9 @@ public class Invoice {
     @Column(nullable = false, updatable = false, unique = true)
     private UUID id;
 
+    @Column(nullable = false, updatable = false, unique = true)
+    private String sessionId;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -48,11 +51,11 @@ public class Invoice {
 
     @Column(nullable = false)
     @Enumerated(EnumType.ORDINAL)
-    private PaymentMethod paymentMethod = PaymentMethod.NONE;
+    private PaymentMethod paymentMethod;
 
     @Column(nullable = false)
     @Enumerated(EnumType.ORDINAL)
-    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+    private PaymentStatus paymentStatus;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

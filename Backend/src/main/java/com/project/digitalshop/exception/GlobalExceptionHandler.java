@@ -1,6 +1,8 @@
 package com.project.digitalshop.exception;
 
 import com.project.digitalshop.dto.ErrorResponse;
+import com.stripe.exception.StripeException;
+
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +34,13 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
         ErrorResponse errorResponse = new ErrorResponse("Validation Error", errors);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<ErrorResponse> handleIOException(IOException ex) {
         ErrorResponse errorResponse = new ErrorResponse("IO Error", Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -48,48 +50,55 @@ public class GlobalExceptionHandler {
         List<String> details = List
                 .of("Supported Methods: " + Objects.requireNonNull(ex.getSupportedHttpMethods()).toString());
         ErrorResponse errorResponse = new ErrorResponse(message, details);
-        return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse("Not Found", Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialException(BadCredentialsException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse("Bad Credentials",
                 Arrays.asList("Invalid Email or Password!!!"));
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse("An Error Occurred",
                 Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse("Authentication Error",
                 Collections.singletonList("You need to authenticate to access this resource."));
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse("Access Denied",
                 Collections.singletonList("You do not have permission to access this resource."));
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse("Resource Not Found",
                 Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(StripeException.class)
+    public ResponseEntity<ErrorResponse> handleStripeException(StripeException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Error creating checkout session",
+                Collections.singletonList(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     // Handle all other exceptions
@@ -98,6 +107,6 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse("Internal Server Error",
                 Arrays.asList(
                         "Our server encountered some technical issues. We're working to resolve it as quickly as possible. Please try again later."));
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
