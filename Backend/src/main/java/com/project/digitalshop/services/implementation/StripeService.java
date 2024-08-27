@@ -134,8 +134,7 @@ public class StripeService implements IStripeService {
 
         // Build the session line items
         for (Product product : products) {
-            sessionItemsList.add(createSessionLineItem(product, 1, checkoutDTO.getTax())); // Assuming quantity of 1 per
-                                                                                           // product
+            sessionItemsList.add(createSessionLineItem(product, 1, checkoutDTO.getTax())); // Assuming quantity of 1 per product
         }
 
         Customer customer = getOrCreateCustomer(user);

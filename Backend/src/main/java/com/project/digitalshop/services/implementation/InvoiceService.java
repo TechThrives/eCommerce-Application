@@ -14,10 +14,13 @@ import org.springframework.validation.annotation.Validated;
 import com.project.digitalshop.dto.invoice.InvoiceDTO;
 import com.project.digitalshop.dto.invoice.InvoiceUserDTO;
 import com.project.digitalshop.dto.invoice.InvoiceResponseDTO;
+import com.cloudinary.api.exceptions.AlreadyExists;
 import com.project.digitalshop.dto.category.CategoryProductDTO;
 import com.project.digitalshop.dto.product.ProductResponseDTO;
 import com.project.digitalshop.exception.NotFoundException;
+import com.project.digitalshop.exception.ResourceAlreadyExistsException;
 import com.project.digitalshop.model.Invoice;
+import com.project.digitalshop.model.PaymentStatus;
 import com.project.digitalshop.model.Product;
 import com.project.digitalshop.model.User;
 import com.project.digitalshop.repository.InvoiceRepository;
@@ -44,6 +47,13 @@ public class InvoiceService implements IInvoiceService {
 
     @Override
     public InvoiceResponseDTO createInvoice(@Valid InvoiceDTO invoiceDTO) {
+        Invoice existingInvoice = invoiceRepository.findBySessionId(invoiceDTO.getSessionId())
+        .orElse(null);
+        
+        if (existingInvoice != null && existingInvoice.getPaymentStatus() == PaymentStatus.SUCCESS) {
+            throw new ResourceAlreadyExistsException("Invoice already created with payment success");
+        }
+        
         Invoice invoice = new Invoice();
         invoice.setSessionId(invoiceDTO.getSessionId());
         User user = userRepository.findById(invoiceDTO.getUserId())
