@@ -4,12 +4,13 @@ import Wrapper from "../Components/Wrapper";
 import Loader from "../Components/Loader";
 import axiosConfig from "../Utils/axiosConfig";
 import { notify } from "../Utils/Helper";
+import Success from "../Components/Images/Success.gif";
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const query = new URLSearchParams(useLocation().search);
-    const sessionId = query.get("session_id");
+  const sessionId = query.get("session_id");
 
   const createInvoice = async (sessionId) => {
     try {
@@ -24,7 +25,13 @@ export default function PaymentSuccess() {
     } catch (error) {
       if (error.response) {
         const { data } = error.response;
-        if (data.details && Array.isArray(data.details) && data.message) {
+        if (error.response.status === 409) {
+          notify("Order already created.", "warning");
+          localStorage.setItem("cart", JSON.stringify([]));
+          setTimeout(() => {
+            navigate("/account/invoices");
+          }, 3000);
+        }else if (data.details && Array.isArray(data.details) && data.message) {
           notify(data.message || "An unexpected error occurred.", "error");
           navigate("/shop");
         }
@@ -39,7 +46,7 @@ export default function PaymentSuccess() {
     setIsLoading(true);
     if (sessionId) {
       createInvoice(sessionId);
-    }else{
+    } else {
       navigate("/shop");
     }
   }, [sessionId]);
@@ -47,29 +54,31 @@ export default function PaymentSuccess() {
   return (
     <div className="min-h-[450px] flex items-center">
       <Wrapper>
-      {isLoading ? (
+        {isLoading ? (
           <div className="w-full min-h-screen flex items-center justify-center bg-white absolute inset-0 z-10">
             <Loader />
           </div>
         ) : (
           <>
-        <div className="max-w-[600px] rounded-lg p-5 border border-black mx-auto flex flex-col">
-          <div className="text-2xl font-bold">Thanks for shopping with us!</div>
-          <div className="text-lg font-bold mt-2">
-            Your order has been placed successfully.
-          </div>
-          <div className="text-base mt-5">
-            For any product related query, drop an email to
-          </div>
-          <div className="underline">shoeshopcontact@shop.com</div>
+            <div className="max-w-[600px] rounded-lg p-5 border border-black mx-auto flex flex-col">
+              <img src={Success} className="h-40 w-40 mx-auto"  alt="Success" />
+              <div className="text-2xl font-bold">
+                Thanks for shopping with us!
+              </div>
+              <div className="text-lg font-bold mt-2">
+                Your order has been placed successfully.
+              </div>
+              <div className="text-base mt-5">
+                For any product related query, drop an email to
+              </div>
+              <div className="underline">shoeshopcontact@shop.com</div>
 
-          <Link href="/" className="font-bold mt-5">
-            Continue Shopping
-          </Link>
-        </div>
-      </>
+              <Link href="/" className="font-bold mt-5">
+                Continue Shopping
+              </Link>
+            </div>
+          </>
         )}
-
       </Wrapper>
     </div>
   );

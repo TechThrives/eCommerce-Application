@@ -229,6 +229,8 @@ export default function Account() {
                   tableData={tableDataInvoice}
                   columns={invoiceColumns}
                   rows={invoices}
+                  pageSize={5}
+                  currentPage={0}
                 />
               </div>
               <div className="my-10">
@@ -236,6 +238,8 @@ export default function Account() {
                   tableData={tableDataReview}
                   columns={reviewColumns}
                   rows={reviews}
+                  pageSize={5}
+                  currentPage={0}
                 />
               </div>
             </div>

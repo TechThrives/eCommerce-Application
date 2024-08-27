@@ -9,7 +9,7 @@ import Loader from "../../Components/Loader";
 import { useAppContext } from "../../Features/AppContext";
 
 export default function Reviews() {
-  const {user} = useAppContext();
+  const { user } = useAppContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -122,49 +122,54 @@ export default function Reviews() {
 
   return (
     <>
-    {isLoading ? (
-      <div className="w-full min-h-screen flex items-center justify-center bg-white absolute inset-0 z-10">
-        <Loader />
-      </div>
-    ) : (
-      <>
-      <div className="flex flex-col">
-        {isModelOpen && (
-          <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
-        )}
-        {isInfoModelOpen && (
-          <InfoModal
-            setIsModelOpen={setIsInfoModelOpen}
-            data={selectedReview}
-          />
-        )}
-        <div className="items-center my-4">
-          <TableView
-            tableData={tableData}
-            columns={columns}
-            rows={reviews}
-            handleView={(row) => {
-              setSelectedReview(row);
-              setIsInfoModelOpen(true);
-            }}
-            handleDelete={(row) => {
-              setSelectedReview(row);
-              setIsModelOpen(true);
-            }}
-          />
-          <div className="flex flex-start">
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
+      {isLoading ? (
+        <div className="w-full min-h-screen flex items-center justify-center bg-white absolute inset-0 z-10">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col">
+            {isModelOpen && (
+              <Model
+                setIsModelOpen={setIsModelOpen}
+                modelAction={handleDelete}
               />
             )}
+            {isInfoModelOpen && (
+              <InfoModal
+                setIsModelOpen={setIsInfoModelOpen}
+                data={selectedReview}
+              />
+            )}
+            <div className="items-center my-4">
+              <TableView
+                tableData={tableData}
+                columns={columns}
+                rows={reviews}
+                handleView={(row) => {
+                  setSelectedReview(row);
+                  setIsInfoModelOpen(true);
+                }}
+                handleDelete={(row) => {
+                  setSelectedReview(row);
+                  setIsModelOpen(true);
+                }}
+                pageSize={pageSize}
+                currentPage={currentPage}
+              />
+              <div className="flex flex-start">
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </>
-    )}
+        </>
+      )}
     </>
   );
 }

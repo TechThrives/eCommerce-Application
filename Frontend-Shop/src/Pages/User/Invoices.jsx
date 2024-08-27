@@ -9,7 +9,7 @@ import Model from "../../Components/Model";
 import { useAppContext } from "../../Features/AppContext";
 
 export default function Invoices() {
-  const {user} = useAppContext();
+  const { user } = useAppContext();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [invoices, setInvoices] = useState([]);
@@ -121,42 +121,47 @@ export default function Invoices() {
 
   return (
     <>
-    {isLoading ? (
-      <div className="w-full min-h-screen flex items-center justify-center bg-white absolute inset-0 z-10">
-        <Loader />
-      </div>
-    ) : (
-      <>
-      <div className="flex flex-col">
-      {isModelOpen && (
-          <Model setIsModelOpen={setIsModelOpen} modelAction={handleDelete} />
-        )}
-        <div className="items-center my-4">
-          <TableView
-            tableData={tableData}
-            columns={columns}
-            rows={invoices}
-            handleView={(row) => {
-              navigate(`/account/view-invoice/${row.id}`);
-            }}
-            handleDelete={(row) => {
-              setSelectedInvoice(row);
-              setIsModelOpen(true);
-            }}
-          />
-          <div className="flex flex-start">
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
+      {isLoading ? (
+        <div className="w-full min-h-screen flex items-center justify-center bg-white absolute inset-0 z-10">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col">
+            {isModelOpen && (
+              <Model
+                setIsModelOpen={setIsModelOpen}
+                modelAction={handleDelete}
               />
             )}
+            <div className="items-center my-4">
+              <TableView
+                tableData={tableData}
+                columns={columns}
+                rows={invoices}
+                handleView={(row) => {
+                  navigate(`/account/view-invoice/${row.id}`);
+                }}
+                handleDelete={(row) => {
+                  setSelectedInvoice(row);
+                  setIsModelOpen(true);
+                }}
+                pageSize={pageSize}
+                currentPage={currentPage}
+              />
+              <div className="flex flex-start">
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      </>
-    )}
+        </>
+      )}
     </>
   );
 }

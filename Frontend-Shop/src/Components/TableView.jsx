@@ -18,6 +18,8 @@ const TableView = ({
   handleView = (id) => {},
   handleEdit = (id) => {},
   handleDelete = (id) => {},
+  pageSize,
+  currentPage,
 }) => {
   const formatDateTime = (dateTime) => {
     return new Date(dateTime).toLocaleString("en-US", {
@@ -100,7 +102,7 @@ const TableView = ({
 
     switch (column.type) {
       case "index":
-        return <p className="font-bold text-blue-500">{index + 1}</p>;
+        return <p className="font-bold text-blue-500">{index + 1 + (currentPage - 1) * pageSize}</p>;
       case "text":
         return <p className="text-sm text-wrap">{value}</p>;
       case "longText":
