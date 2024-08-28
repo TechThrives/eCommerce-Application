@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM maven:3.8.5-openjdk-21 AS build
+FROM maven:3.9.8-amazoncorretto-17-al2023 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application
-FROM openjdk:21-jdk
+FROM openjdk:24-slim-bullseye
 
 # Set the working directory inside the container
 WORKDIR /app
