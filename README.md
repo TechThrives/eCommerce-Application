@@ -132,8 +132,8 @@ npm install
     In the root directory of your React App, create a file named `.env`.
     
     Open the `.env` file and add the following environment variables:
-
-  - **`REACT_APP_TAX_RATE`**: Specifies the tax rate to be applied in the application.
+ 
+     - **`REACT_APP_BACKEND_URL`**: Defines the base URL of the backend server.
 
   By setting these environment variables, you ensure that your React app can properly interact with external services and configurations.
 
@@ -167,7 +167,7 @@ npm install
 
   - **`REACT_APP_STRIPE_PUBLISHABLE_KEY`**: Contains the publishable key for integrating with Stripe's payment gateway.
 
-  - **`REACT_APP_BACKEND_URL`**: Defines the base URL of the backend server.
+  - **`REACT_APP_TAX_RATE`**: Specifies the tax rate to be applied in the application.
 
   By setting these environment variables, you ensure that your React app can properly interact with external services and configurations.
 
