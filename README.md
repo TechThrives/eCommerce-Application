@@ -1,1 +1,146 @@
-# eCommerce-Application
+# Digital eCommerce Platform
+
+## Overview
+
+This is a comprehensive eCommerce platform developed using Spring Boot, MySQL, React JS, Postman, and Swagger. It is designed to offer efficient back-end processing, a dynamic front-end, and a secure and reliable user experience.
+
+## Technologies Used
+
+- **Back-End:** Spring Boot
+- **Database:** MySQL
+- **Front-End:** React JS
+- **API Testing:** Postman
+- **API Documentation:** Swagger
+
+## Features
+
+- **JWT Authentication:** Implemented to enhance security and user authorization.
+- **Distinct User Interfaces:** Designed for both administrative management and customer interactions, resulting in intuitive and user-friendly experiences.
+- **API Documentation:** Integrated Swagger for interactive API documentation and testing.
+
+## Description
+
+This eCommerce platform aims to streamline order processing and user management. It utilizes Spring Boot and MySQL for efficient back-end processing and React JS for a dynamic front-end. JWT authentication is used to ensure a secure and reliable user experience. Additionally, the platform features distinct user interfaces tailored for administrative management and customer interactions, providing an intuitive and user-friendly experience. Swagger is included for interactive API documentation, making it easier to explore and test API endpoints.
+
+## Installation
+
+### Back-End
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/TechThrives/eCommerce-Application.git
+cd eCommerce-Application
+```
+
+#### 2. Set Up the Back-End
+
+- #### Navigate to the backend directory
+
+```bash
+cd backend
+```
+
+- #### Install dependencies using Maven
+
+```bash
+./mvnw install
+```
+
+- #### Configure Application Properties
+
+  Create a `.env` File:
+
+  - In the root directory of your Spring Boot project, create a file named `.env`.
+
+  Add Environment Variables:
+
+  - Open the `.env` file and add your environment variables in the following format:
+    ```dotenv
+    VARIABLE_NAME=VALUE
+    ```
+    For example:
+    ```dotenv
+    SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/yourdatabase
+    SPRING_DATASOURCE_USERNAME=yourusername
+    SPRING_DATASOURCE_PASSWORD=yourpassword
+    JWT_SECRET_KEY=yourjwtsecretkey
+    ```
+    Ensure your Spring Boot application is configured to load environment variables from the `.env` file.
+
+- #### Run the Back-End Server
+
+```bash
+./mvnw spring-boot:run
+```
+
+#### 3. Front-End - Admin
+
+- #### Navigate to the Admin Front-End Directory
+
+```bash
+cd frontend-admin
+```
+
+- #### Install Dependencies
+
+```bash
+npm install
+```
+
+- #### Run the Admin Front-End Server
+
+```bash
+npm start
+```
+
+#### 4. Front-End - Shop
+
+- #### Navigate to the Shop Front-End Directory
+
+```bash
+cd frontend-shop
+```
+
+- #### Install Dependencies
+
+```bash
+npm install
+```
+
+- #### Run the Shop Front-End Server
+
+```bash
+npm start
+```
+
+#### 5. Access the Application
+
+- #### Back-End:
+
+  http://localhost:8080
+
+- #### Admin Front-End:
+
+  http://localhost:3000
+
+- #### Shop Front-End:
+
+  http://localhost:3001
+
+- #### Swagger Documentation:
+  http://localhost:8080/swagger-ui/index.html
+
+## Contributing
+
+We welcome contributions from the community. To contribute to this project, please follow these guidelines:
+
+- Fork the repository
+- Create a new branch for your feature or bug fix
+- Make your changes and ensure they are well-tested
+- Create a pull request to the main branch of the original repository
+
+## Developers
+
+- Omkar Kanade [@omkarkanade](https://www.github.com/omkarkanade)
+- Swarup Kanade [@swarupkanade](https://www.github.com/swarupkanade)
