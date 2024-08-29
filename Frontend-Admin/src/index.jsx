@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./scss/theme.scss";
+// import "./scss/theme.scss";
+import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "simplebar"; // or "import SimpleBar from 'simplebar';" if you want to use it manually.
+import "simplebar"; 
 import "simplebar/dist/simplebar.css";
 import { Config } from "./script";
 
