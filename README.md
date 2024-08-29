@@ -24,8 +24,6 @@ This eCommerce platform aims to streamline order processing and user management.
 
 ## Installation
 
-### Back-End
-
 #### 1. Clone the Repository
 
 ```bash
@@ -49,24 +47,69 @@ cd backend
 
 - #### Configure Application Properties
 
-  Create a `.env` File:
+  1. Create a `.env` File:
 
   - In the root directory of your Spring Boot project, create a file named `.env`.
 
-  Add Environment Variables:
+  2. Add Environment Variables:
 
-  - Open the `.env` file and add your environment variables in the following format:
-    ```dotenv
-    VARIABLE_NAME=VALUE
-    ```
-    For example:
-    ```dotenv
-    SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/yourdatabase
-    SPRING_DATASOURCE_USERNAME=yourusername
-    SPRING_DATASOURCE_PASSWORD=yourpassword
-    JWT_SECRET_KEY=yourjwtsecretkey
-    ```
-    Ensure your Spring Boot application is configured to load environment variables from the `.env` file.
+  - Open the `.env` file and add the following environment variables:
+
+  - **`APPLICATION_NAME`**: The name of the application.
+
+  - **`MONGODB_URI`**: The URI for MongoDB connection.
+
+  - **`DATASOURCE_URL`**: The URL for the MySQL database.
+
+  - **`DATASOURCE_USERNAME`**: The username for MySQL database access.
+
+  - **`DATASOURCE_PASSWORD`**: The password for MySQL database access.
+
+  - **`DATASOURCE_DRIVER`**: The driver class name for MySQL.
+
+  - **`JPA_HIBERNATE_DDL_AUTO`**: Hibernate DDL auto configuration (e.g. `update`, `create`).
+
+  - **`JPA_SHOW_SQL`**: Whether to show SQL statements in logs (`true` or `false`).
+
+  - **`JPA_OPEN_IN_VIEW`**: Whether to keep Hibernate session open during the view rendering (`true` or `false`).
+
+  - **`JPA_GENERATE_DDL`**: Whether to generate the database schema (`true` or `false`).
+
+  - **`DEVTOOLS_LIVERELOAD_ENABLED`**: Whether LiveReload is enabled for Spring Boot DevTools (`true` or `false`).
+
+  - **`LOGGING_LEVEL_ROOT`**: Logging level for the root logger (e.g. `INFO`, `DEBUG`).
+
+  - **`LOGGING_LEVEL_SPRING_WEB`**: Logging level for Spring Web components (e.g. `INFO`, `DEBUG`).
+
+  - **`MVC_VIEW_PREFIX`**: Prefix for view paths in MVC configuration.
+
+  - **`MVC_VIEW_SUFFIX`**: Suffix for view paths in MVC configuration.
+
+  - **`JWT_SECRET_KEY`**: Secret key used for JWT authentication.
+
+  - **`JWT_ACCESS_TOKEN_EXPIRATION`**: Expiration time for access tokens.
+
+  - **`JWT_REFRESH_TOKEN_EXPIRATION`**: Expiration time for refresh tokens.
+
+  - **`MULTIPART_ENABLED`**: Whether multipart file uploads are enabled (`true` or `false`).
+
+  - **`MULTIPART_MAX_FILE_SIZE`**: Maximum file size for multipart uploads.
+
+  - **`MULTIPART_MAX_REQUEST_SIZE`**: Maximum request size for multipart uploads.
+
+  - **`CLOUDINARY_CLOUD_NAME`**: Cloud name for Cloudinary configuration.
+
+  - **`CLOUDINARY_API_KEY`**: API key for Cloudinary.
+
+  - **`CLOUDINARY_API_SECRET`**: API secret for Cloudinary.
+
+  - **`USER_PROFILE_IMAGE_URL`**: Default URL for user profile images.
+
+  - **`STRIPE_SECRET_KEY`**: Secret key for Stripe integration.
+
+  - **`BASE_URL`**: Base URL for the Front-End Shop.
+
+  Ensure your Spring Boot application is configured to load environment variables from the `.env` file.
 
 - #### Run the Back-End Server
 
@@ -88,6 +131,24 @@ cd frontend-admin
 npm install
 ```
 
+- #### Configure Environment Variables
+
+  1. Create a `.env` File:
+
+  - In the root directory of your React App, create a file named `.env`.
+
+  2. Add Environment Variables:
+
+  - Open the `.env` file and add the following environment variables:
+
+  - **`REACT_APP_TAX_RATE`**: Specifies the tax rate to be applied in the application.
+
+  - **`REACT_APP_STRIPE_PUBLISHABLE_KEY`**: Contains the publishable key for integrating with Stripe's payment gateway.
+
+  - **`REACT_APP_BACKEND_URL`**: Defines the base URL of the backend server.
+
+  By setting these environment variables, you ensure that your React app can properly interact with external services and configurations.
+
 - #### Run the Admin Front-End Server
 
 ```bash
@@ -107,6 +168,20 @@ cd frontend-shop
 ```bash
 npm install
 ```
+
+- #### Configure Environment Variables
+
+  1. Create a `.env` File:
+
+  - In the root directory of your React App, create a file named `.env`.
+
+  2. Add Environment Variables:
+
+  - Open the `.env` file and add the following environment variables:
+
+  - **`REACT_APP_BACKEND_URL`**: Defines the base URL of the backend server.
+
+  By setting these environment variables, you ensure that your React app can properly interact with external services and configurations.
 
 - #### Run the Shop Front-End Server
 
