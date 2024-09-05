@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ICloudinaryService {
     public String uploadFile(MultipartFile file, String folderName);
 
+    public String uploadZipFile(MultipartFile file, String folderName, String publicId);
+
     public List<String> uploadFiles(List<MultipartFile> files, String folderName);
 
     public void deleteFile(String fileUrl, String folderName);

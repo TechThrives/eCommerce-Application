@@ -26,9 +26,28 @@ public class CloudinaryService implements ICloudinaryService {
         try {
             HashMap<String, Object> options = new HashMap<>();
             options.put("folder", folderName);
+            options.put("resource_type", "image");
             Map<String, Object> uploadedFile = cloudinary.uploader().upload(file.getBytes(), options);
             String publicId = (String) uploadedFile.get("public_id");
             return cloudinary.url().secure(true).generate(publicId);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public String uploadZipFile(MultipartFile file, String folderName, String publicId) {
+        try {
+            HashMap<String, Object> options = new HashMap<>();
+            options.put("folder", folderName);
+            options.put("public_id", publicId);
+            options.put("resource_type", "raw");
+            options.put("format", "zip");
+            Map<String, Object> uploadedFile = cloudinary.uploader().upload(file.getBytes(), options);
+            String newpublicId = (String) uploadedFile.get("public_id");
+            return cloudinary.url().secure(true).generate(newpublicId);
 
         } catch (IOException e) {
             e.printStackTrace();

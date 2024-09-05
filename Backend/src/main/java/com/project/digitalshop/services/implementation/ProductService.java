@@ -77,7 +77,7 @@ public class ProductService implements IProductService {
         List<String> imageUrls = cloudinaryService.uploadFiles(productDTO.getImages(), "products");
         product.setImageUrls(imageUrls);
 
-        String downloadUrl = cloudinaryService.uploadFile(productDTO.getFile(), "productsFiles");
+        String downloadUrl = cloudinaryService.uploadZipFile(productDTO.getFile(), "productsFiles", product.getSlug());
         product.setDownloadUrl(downloadUrl);
 
         product = productRepository.save(product);
@@ -115,7 +115,7 @@ public class ProductService implements IProductService {
                 cloudinaryService.deleteFile(existingFileUrl, "productsFiles");
             }
 
-            String newFileUrl = cloudinaryService.uploadFile(productUpdateDTO.getFile(), "productsFiles");
+            String newFileUrl = cloudinaryService.uploadZipFile(productUpdateDTO.getFile(), "productsFiles", existingProduct.getSlug());
             existingProduct.setDownloadUrl(newFileUrl);
         }
 
