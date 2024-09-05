@@ -6,21 +6,23 @@ import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import ZipFileUploader from "../../components/ZipFileUploader";
 
 function EditProduct() {
-  const {productId} = useParams();
+  const { productId } = useParams();
   const { setAppData, setIsLoading } = useAppContext();
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [images, setImages] = useState([]);
+  const [imageChange, setImageChange] = useState(false);
+  const [zipFile, setZipFile] = useState(null);
   const [product, setProduct] = useState({
     name: "",
     overview: "",
     shortDescription: "",
     price: 0.0,
     originalPrice: 0.0,
-    quantity: "",
     categoryId: "",
   });
   const [description, setDescription] = useState("");
@@ -57,7 +59,6 @@ function EditProduct() {
     const blob = await response.blob();
     return new File([blob], filename, { type: blob.type });
   };
-  
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -65,7 +66,10 @@ function EditProduct() {
         const response = await axiosConfig.get(`/api/products/${productId}`);
         if (response.data) {
           setProduct(response.data);
-          setProduct((prev) => ({ ...prev, categoryId: response.data.category.id }));
+          setProduct((prev) => ({
+            ...prev,
+            categoryId: response.data.category.id,
+          }));
           setTags(response.data.tags);
           setDescription(response.data.description);
           const imageFiles = await Promise.all(
@@ -74,7 +78,7 @@ function EditProduct() {
               return file;
             })
           );
-    
+
           setImages(imageFiles);
         }
       } catch (error) {
@@ -88,14 +92,11 @@ function EditProduct() {
           notify("An unexpected error occurred.", "error");
         }
       }
-
-    }
+    };
 
     const fetchCategories = async () => {
       try {
-        const response = await axiosConfig.get(
-          `/api/categories/all`
-        );
+        const response = await axiosConfig.get(`/api/categories/all`);
         if (response.data) {
           setCategories(response.data);
         }
@@ -115,9 +116,10 @@ function EditProduct() {
     setAppData((prev) => ({ ...prev, header: "Product Edit" }));
   }, [productId]);
 
+  console.log(imageChange);
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!images.length) {
+    if (!images.length && imageChange) {
       notify("Product image is required", "error");
       return;
     }
@@ -145,7 +147,10 @@ function EditProduct() {
       notify("Product original price is required", "error");
       return;
     }
-    if (parseInt(product.price) < 0 || parseInt(product.price) > parseInt(product.originalPrice)) {
+    if (
+      parseInt(product.price) < 0 ||
+      parseInt(product.price) > parseInt(product.originalPrice)
+    ) {
       notify("Product price must be between 0 and original price", "error");
       return;
     }
@@ -159,16 +164,23 @@ function EditProduct() {
     formData.append("overview", product.overview);
     formData.append("shortDescription", product.shortDescription);
     formData.append("description", description);
-    formData.append("price", product.price);
-    formData.append("originalPrice", product.originalPrice);
-    formData.append("quantity", product.quantity);
+    formData.append("price", parseFloat(product.price).toFixed(2));
+    formData.append(
+      "originalPrice",
+      parseFloat(product.originalPrice).toFixed(2)
+    );
     tags.forEach((tag) => {
       formData.append("tags", tag);
     });
-    images.forEach((image) => {
-      formData.append("images", image);
-    });
+    if(imageChange){
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
+    }
     formData.append("categoryId", product.categoryId);
+    if (zipFile) {
+      formData.append("file", zipFile);
+    }
     setIsLoading(true);
     try {
       const response = await axiosConfig.put(
@@ -179,7 +191,10 @@ function EditProduct() {
         notify("Product updated successfully", "success");
         if (response.data) {
           setProduct(response.data);
-          setProduct((prev) => ({ ...prev, categoryId: response.data.category.id }));
+          setProduct((prev) => ({
+            ...prev,
+            categoryId: response.data.category.id,
+          }));
           setTags(response.data.tags);
           setDescription(response.data.description);
           const imageFiles = await Promise.all(
@@ -190,8 +205,8 @@ function EditProduct() {
           );
 
           setImages(imageFiles);
+          setZipFile(null);
         }
-        
       }
     } catch (error) {
       if (error.response) {
@@ -207,7 +222,7 @@ function EditProduct() {
     }
     setIsLoading(false);
   };
-  
+
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -221,12 +236,24 @@ function EditProduct() {
                   htmlFor="images"
                   className="text-gray-800 text-sm font-medium inline-block mb-2"
                 >
+                  Product File{" "}
+                  <em className="text-xs text-gray-500">
+                    Product file should be in .zip format
+                  </em>
+                </label>
+                <ZipFileUploader zipFile={zipFile} setZipFile={setZipFile} />
+              </div>
+              <div className="lg:col-span-2">
+                <label
+                  htmlFor="images"
+                  className="text-gray-800 text-sm font-medium inline-block mb-2"
+                >
                   Product Images{" "}
                   <em className="text-xs text-gray-500">
                     First image will be featured
                   </em>
                 </label>
-                <MultiImageUploader images={images} setImages={setImages} />
+                <MultiImageUploader images={images} setImages={setImages} setImageChange={setImageChange}/>
               </div>
 
               <div>

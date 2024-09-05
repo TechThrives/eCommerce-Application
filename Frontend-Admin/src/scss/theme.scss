@@ -37,3 +37,9 @@ File: Main Css File
 @import "plugins/google-map";
 @import "plugins/fullcalendar";
 @import "plugins/wave";
+
+/* TOASTIFY */
+.toast-base {
+    font-size: small;
+    min-height: 10px !important;
+  }

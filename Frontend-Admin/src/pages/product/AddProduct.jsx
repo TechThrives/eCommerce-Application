@@ -6,6 +6,7 @@ import axiosConfig from "../../utils/axiosConfig";
 import { notify } from "../../utils/Helper";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import ZipFileUploader from "../../components/ZipFileUploader";
 
 function AddProduct() {
   const { setAppData, setIsLoading } = useAppContext();
@@ -13,13 +14,14 @@ function AddProduct() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [images, setImages] = useState([]);
+  const [imageChange, setImageChange] = useState(false);
+  const [zipFile, setZipFile] = useState(null);
   const [product, setProduct] = useState({
     name: "",
     overview: "",
     shortDescription: "",
     price: 0.0,
     originalPrice: 0.0,
-    quantity: "",
     categoryId: "",
   });
   const [description, setDescription] = useState("");
@@ -81,6 +83,10 @@ function AddProduct() {
       notify("Product image is required", "error");
       return;
     }
+    if (!zipFile) {
+      notify("Product Zip file is required", "error");
+      return;
+    }
     if (!product.name) {
       notify("Product name is required", "error");
       return;
@@ -120,9 +126,8 @@ function AddProduct() {
     formData.append("overview", product.overview);
     formData.append("shortDescription", product.shortDescription);
     formData.append("description", description);
-    formData.append("price", product.price);
-    formData.append("originalPrice", product.originalPrice);
-    formData.append("quantity", product.quantity);
+    formData.append("price", parseFloat(product.price).toFixed(2));
+    formData.append("originalPrice", parseFloat(product.originalPrice).toFixed(2));
     tags.forEach((tag) => {
       formData.append("tags", tag);
     });
@@ -130,6 +135,7 @@ function AddProduct() {
       formData.append("images", image);
     });
     formData.append("categoryId", product.categoryId);
+    formData.append("file", zipFile);
     setIsLoading(true);
     try {
       const response = await axiosConfig.post(
@@ -144,12 +150,12 @@ function AddProduct() {
           shortDescription: "",
           price: 0,
           originalPrice: 0,
-          quantity: "",
           categoryId: "",
         });
         setImages([]);
         setDescription("");
         setTags([]);
+        setZipFile(null);
       }
     } catch (error) {
       if (error.response) {
@@ -174,6 +180,18 @@ function AddProduct() {
             <h4 className="card-title mb-4">Product</h4>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="lg:col-span-2">
+                <label
+                  htmlFor="images"
+                  className="text-gray-800 text-sm font-medium inline-block mb-2"
+                >
+                  Product File{" "}
+                  <em className="text-xs text-gray-500">
+                    Product file should be in .zip format
+                  </em>
+                </label>
+                <ZipFileUploader zipFile={zipFile} setZipFile={setZipFile} />
+              </div>
               <div className="lg:col-span-2">
                 <label
                   htmlFor="images"
@@ -184,7 +202,7 @@ function AddProduct() {
                     First image will be featured
                   </em>
                 </label>
-                <MultiImageUploader images={images} setImages={setImages} />
+                <MultiImageUploader images={images} setImages={setImages} setImageChange={setImageChange} />
               </div>
 
               <div>

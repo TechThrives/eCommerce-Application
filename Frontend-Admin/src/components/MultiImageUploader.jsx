@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo } from "react";
 import { notify } from "../utils/Helper";
 
-function MultiImageUploader({ images, setImages }) {
+function MultiImageUploader({ images, setImages, setImageChange }) {
+  const allowedTypes = ["image/jpeg", "image/png"];
   const handleImageChange = (event) => {
+    setImageChange(true);
     const files = event.target.files;
     const newImages = [];
 
     for (let i = 0; i < files.length; i++) {
-      if (files[i].type.startsWith("image/")) {
+      if (allowedTypes.includes(files[i].type)) {
         if (files[i].size > 2 * 1024 * 1024) {
           notify("Max file size is 2 MB", "warning");
           continue;
@@ -20,6 +22,7 @@ function MultiImageUploader({ images, setImages }) {
   };
 
   const handleImageRemove = (index) => {
+    setImageChange(true);
     const newImages = [...images];
     URL.revokeObjectURL(newImages[index].preview);
     newImages.splice(index, 1);
