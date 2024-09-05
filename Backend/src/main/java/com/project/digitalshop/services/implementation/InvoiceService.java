@@ -1,7 +1,9 @@
 package com.project.digitalshop.services.implementation;
 
 import java.util.UUID;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
@@ -14,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import com.project.digitalshop.dto.invoice.InvoiceDTO;
 import com.project.digitalshop.dto.invoice.InvoiceUserDTO;
 import com.project.digitalshop.dto.invoice.InvoiceResponseDTO;
-import com.cloudinary.api.exceptions.AlreadyExists;
 import com.project.digitalshop.dto.category.CategoryProductDTO;
 import com.project.digitalshop.dto.product.ProductResponseDTO;
 import com.project.digitalshop.exception.NotFoundException;
@@ -37,23 +38,25 @@ public class InvoiceService implements IInvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final EmailService emailService;
 
     public InvoiceService(InvoiceRepository invoiceRepository, UserRepository userRepository,
-            ProductRepository productRepository) {
+            ProductRepository productRepository, EmailService emailService) {
         this.invoiceRepository = invoiceRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.emailService = emailService;
     }
 
     @Override
     public InvoiceResponseDTO createInvoice(@Valid InvoiceDTO invoiceDTO) {
         Invoice existingInvoice = invoiceRepository.findBySessionId(invoiceDTO.getSessionId())
-        .orElse(null);
-        
+                .orElse(null);
+
         if (existingInvoice != null && existingInvoice.getPaymentStatus() == PaymentStatus.SUCCESS) {
             throw new ResourceAlreadyExistsException("Invoice already created with payment success");
         }
-        
+
         Invoice invoice = new Invoice();
         invoice.setSessionId(invoiceDTO.getSessionId());
         User user = userRepository.findById(invoiceDTO.getUserId())
@@ -91,7 +94,21 @@ public class InvoiceService implements IInvoiceService {
             productResponseDTO.setCategory(categoryDTO);
             return productResponseDTO;
         }).collect(Collectors.toList()));
+
+        Map<String, String> downloadLinks = invoice.getProducts().stream()
+                .collect(Collectors.toMap(
+                        product -> product.getId().toString(),
+                        product -> product.getDownloadUrl()));
+
+        sendInvoiceEmail(user.getEmail(), invoiceResponseDTO, downloadLinks);
         return invoiceResponseDTO;
+    }
+
+    private boolean sendInvoiceEmail(String to, InvoiceResponseDTO invoiceResponseDTO, Map<String, String> downloadLinks) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("invoice", invoiceResponseDTO);
+        variables.put("downloadLinks", downloadLinks); 
+        return emailService.sendHtmlMessage(to, "Invoice - Digital Shop", variables, "invoice");
     }
 
     @Override

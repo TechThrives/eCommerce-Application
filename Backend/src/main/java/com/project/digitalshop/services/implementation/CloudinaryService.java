@@ -44,6 +44,16 @@ public class CloudinaryService implements ICloudinaryService {
     }
 
     @Override
+    public void deleteFile(String fileUrl, String folderName) {
+        String publicId = extractPublicIdFromUrl(fileUrl, folderName);
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void deleteFiles(List<String> imageUrls, String folderName) {
         for (String url : imageUrls) {
             String publicId = extractPublicIdFromUrl(url, folderName);
@@ -54,7 +64,6 @@ public class CloudinaryService implements ICloudinaryService {
             }
         }
     }
-
     private String extractPublicIdFromUrl(String url, String folderName) {
         String[] urlParts = url.split("/");
         String publicId = urlParts[urlParts.length - 1];

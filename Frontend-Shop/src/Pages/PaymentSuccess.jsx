@@ -16,7 +16,7 @@ export default function PaymentSuccess() {
     try {
       const response = await axiosConfig.post(`/api/invoices`, { sessionId });
       if (response.data) {
-        notify("Order created successfully.", "success");
+        notify("Order created successfully. Check your email for Download Links.", "success");
         localStorage.setItem("cart", JSON.stringify([]));
         setTimeout(() => {
           navigate("/account/invoices");

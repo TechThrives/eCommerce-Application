@@ -77,6 +77,9 @@ public class ProductService implements IProductService {
         List<String> imageUrls = cloudinaryService.uploadFiles(productDTO.getImages(), "products");
         product.setImageUrls(imageUrls);
 
+        String downloadUrl = cloudinaryService.uploadFile(productDTO.getFile(), "productsFiles");
+        product.setDownloadUrl(downloadUrl);
+
         product = productRepository.save(product);
         category.incrementProductCount();
         categoryRepository.save(category);
@@ -105,6 +108,17 @@ public class ProductService implements IProductService {
             List<String> newImageUrls = cloudinaryService.uploadFiles(productUpdateDTO.getImages(), "products");
             existingProduct.setImageUrls(newImageUrls);
         }
+
+        if (productUpdateDTO.getFile() != null) {
+            String existingFileUrl = existingProduct.getDownloadUrl();
+            if (existingFileUrl != null) {
+                cloudinaryService.deleteFile(existingFileUrl, "productsFiles");
+            }
+
+            String newFileUrl = cloudinaryService.uploadFile(productUpdateDTO.getFile(), "productsFiles");
+            existingProduct.setDownloadUrl(newFileUrl);
+        }
+
         existingProduct = productRepository.save(existingProduct);
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO();

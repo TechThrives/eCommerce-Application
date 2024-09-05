@@ -2,7 +2,6 @@ package com.project.digitalshop.services.interfaces;
 
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.digitalshop.dto.product.ProductDTO;
 import com.project.digitalshop.dto.product.ProductResponseDTO;

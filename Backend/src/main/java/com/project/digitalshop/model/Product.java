@@ -64,6 +64,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @Column(nullable = false)
+    private String downloadUrl;
+
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdOn;

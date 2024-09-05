@@ -138,6 +138,13 @@
             <artifactId>stripe-java</artifactId>
             <version>26.7.0</version>
         </dependency>
+
+        <!-- Mail Dependency -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>3.3.3</version>
+        </dependency>
     </dependencies>
 
     <build>

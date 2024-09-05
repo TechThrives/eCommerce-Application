@@ -17,6 +17,7 @@ import lombok.Data;
 public class ProductUpdateDTO {
     @Size(min = 0)
     private List<MultipartFile> images;
+    private MultipartFile file;
     @NotBlank(message = "Name is required")
     private String name;
     @NotBlank(message = "Overview is required")

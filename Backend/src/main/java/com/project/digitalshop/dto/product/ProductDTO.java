@@ -19,6 +19,8 @@ public class ProductDTO {
     @NotNull(message = "Images are required")
     @Size(min = 1, message = "At least one image must be provided")
     private List<MultipartFile> images;
+    @NotNull(message = "File is required")
+    private MultipartFile file;
     @NotBlank(message = "Name is required")
     private String name;
     @NotBlank(message = "Overview is required")

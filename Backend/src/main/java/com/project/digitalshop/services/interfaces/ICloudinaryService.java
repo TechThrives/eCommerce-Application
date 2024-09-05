@@ -9,5 +9,7 @@ public interface ICloudinaryService {
 
     public List<String> uploadFiles(List<MultipartFile> files, String folderName);
 
+    public void deleteFile(String fileUrl, String folderName);
+
     public void deleteFiles(List<String> imageUrls, String folderName);
 }

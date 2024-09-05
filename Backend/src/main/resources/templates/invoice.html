@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice - Digital Shop</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      @media print {
+        @page {
+          margin: 0cm;
+        }
+        body {
+          margin: 1cm;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif">
+    <main style="margin: 0; padding: 0">
+      <div style="background-color: white; margin: 16px; padding: 24px">
+        <div style="margin-bottom: 16px">
+          <div style="display: table; width: 100%; border-spacing: 16px">
+            <div style="display: table-cell; vertical-align: middle">
+              <img
+                style="height: 48px; margin-right: 8px"
+                src="https://res.cloudinary.com/ddccmeegw/image/upload/v1725480360/oi3a1umlkrxpvxk0e98e.png"
+                alt="Digital Shop Logo"
+              />
+              <h1
+                style="
+                  font-size: 1.25rem;
+                  font-weight: 600;
+                  color: black;
+                  display: inline;
+                "
+              >
+                Digital Shop
+              </h1>
+            </div>
+            <div style="display: table-cell; text-align: right">
+              <h2 style="font-size: 1.25rem; font-weight: 600; color: #1a202c">
+                Invoice #
+              </h2>
+              <span style="font-size: 1rem; display: block; color: #2d3748">
+                Invoice ID: [[${invoice.id}]]
+              </span>
+              <address style="font-style: normal; color: #2d3748">
+                <a
+                  style="color: #4299e1; text-decoration: none"
+                  href="https://thedigitalshop.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >https://thedigitalshop.vercel.app/</a
+                >
+              </address>
+            </div>
+          </div>
+        </div>
+        <div
+          style="
+            margin-bottom: 16px;
+            display: table;
+            width: 100%;
+            border-spacing: 16px;
+          "
+        >
+          <div style="display: table-cell; vertical-align: top; width: 50%">
+            <h3 style="font-size: 1rem; font-weight: 600; color: #1a202c">
+              Bill to:
+            </h3>
+            <h3 style="font-size: 1rem; font-weight: 500; color: #2d3748">
+              [[${invoice.user.firstName}]] [[${invoice.user.lastName}]]
+            </h3>
+            <address
+              style="font-size: 1rem; font-style: normal; color: #2d3748"
+            >
+              [[${invoice.user.email}]]<br />
+              [[${invoice.user.phoneNumber}]]<br />
+            </address>
+          </div>
+        </div>
+        <div style="margin-bottom: 16px">
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse">
+              <thead style="background-color: #ebf8ff">
+                <tr>
+                  <th
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      text-align: left;
+                      color: #2d3748;
+                    "
+                  >
+                    Sr. No
+                  </th>
+                  <th
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      text-align: left;
+                      color: #2d3748;
+                    "
+                  >
+                    Product Name
+                  </th>
+                  <th
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      text-align: left;
+                      color: #2d3748;
+                    "
+                  >
+                    Price
+                  </th>
+                  <th
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      text-align: left;
+                      color: #2d3748;
+                    "
+                  >
+                    Status
+                  </th>
+                  <th
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      text-align: left;
+                      color: #2d3748;
+                    "
+                  >
+                    Download
+                  </th>
+                </tr>
+              </thead>
+              <tbody style="background-color: #ffffff">
+                <tr th:each="product, iterStat : ${invoice.products}">
+                  <td
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 500;
+                      color: #2d3748;
+                      white-space: nowrap;
+                    "
+                  >
+                    [[${iterStat.index + 1}]]
+                  </td>
+                  <td
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      color: #2d3748;
+                      word-wrap: break-word;
+                    "
+                  >
+                    [[${product.name}]]
+                  </td>
+                  <td
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      color: #2d3748;
+                      white-space: nowrap;
+                    "
+                  >
+                    &#8377;[[${product.price}]]
+                  </td>
+                  <td
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      font-weight: 500;
+                      color: #2d3748;
+                      white-space: nowrap;
+                    "
+                  >
+                    <div
+                      style="
+                        display: inline-block;
+                        padding: 4px 12px;
+                        border-radius: 9999px;
+                        background-color: rgba(236, 253, 245, 0.6);
+                        color: #38a169;
+                      "
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512"
+                        style="width: 0.825rem; height: 0.825rem"
+                        class="svg-inline--fa fa-check-circle fa-w-16 fa-5x"
+                        data-icon="check-circle"
+                        data-prefix="fas"
+                        role="img"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm-28.5 346.5l-95-95a12 12 0 0 1 0-17l17-17a12 12 0 0 1 17 0l70.5 70.5L393 136.5a12 12 0 0 1 17 0l17 17a12 12 0 0 1 0 17l-156 156a12 12 0 0 1-17 0z"
+                        ></path>
+                      </svg>
+
+                      <span style="font-size: 0.875rem">Paid</span>
+                    </div>
+                  </td>
+                  <td
+                    style="
+                      padding: 16px;
+                      font-size: 0.875rem;
+                      color: #2d3748;
+                      white-space: nowrap;
+                    "
+                  >
+                  <a
+                  style="
+                    background-color: #38a169;
+                    color: white;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    font-size: 0.75rem;
+                    padding: 0.5rem 1rem;
+                    border-radius: 9999px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                    margin-right: 0.25rem;
+                    margin-bottom: 0.25rem;
+                  "
+                  href="[[${downloadLinks[product.id]}]]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download
+                </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div
+          style="margin-bottom: 16px; text-align: right; font-size: 0.875rem"
+        >
+          <div style="margin-bottom: 16px">
+            <table style="width: 100%; text-align: right">
+              <tbody>
+                <tr>
+                  <td
+                    style="
+                      font-size: 0.875rem;
+                      padding: 4px 0;
+                      font-weight: 500;
+                      color: #2d3748;
+                    "
+                  >
+                    Payment Method: [[${invoice.paymentMethod}]]
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      font-size: 0.875rem;
+                      padding: 4px 0;
+                      font-weight: 500;
+                      color: #2d3748;
+                    "
+                  >
+                    Payment Status: [[${invoice.paymentStatus}]]
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      font-size: 0.875rem;
+                      padding: 4px 0;
+                      font-weight: 500;
+                      color: #2d3748;
+                    "
+                  >
+                    Subtotal: &#8377;[[${invoice.subTotal}]]
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      font-size: 0.875rem;
+                      padding: 4px 0;
+                      font-weight: 500;
+                      color: #2d3748;
+                    "
+                  >
+                    Tax: &#8377;[[${invoice.tax}]]
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      font-size: 0.875rem;
+                      padding: 4px 0;
+                      font-weight: 500;
+                      color: #2d3748;
+                    "
+                  >
+                    Total Price: &#8377;[[${invoice.totalPrice}]]
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top: 24px">
+          <h4 style="font-size: 1rem; font-weight: 600; color: #2d3748">
+            Thank you!
+          </h4>
+          <p style="color: #2d3748; font-size: 0.875rem">
+            If you have any questions concerning this invoice, use the following
+            contact information:
+          </p>
+          <div style="margin-top: 8px">
+            <p style="font-size: 0.875rem; font-weight: 500; color: #2d3748">
+              digitalshop@example.com
+            </p>
+            <p style="font-size: 0.875rem; font-weight: 500; color: #2d3748">
+              <a
+                style="color: #4299e1; text-decoration: none"
+                href="https://thedigitalshop.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >https://thedigitalshop.vercel.app/</a
+              >
+            </p>
+          </div>
+        </div>
+
+        <footer
+          style="
+            font-size: 0.875rem;
+            color: #2d3748;
+            padding: 8px;
+            text-align: center;
+          "
+        >
+          <p style="font-size: 0.875rem">
+            &copy;
+            <span
+              style="font-size: 0.875rem"
+              th:text="${#dates.format(new java.util.Date(), 'yyyy')}"
+            ></span>
+            Digital Shop. All Rights Reserved.
+          </p>
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>
