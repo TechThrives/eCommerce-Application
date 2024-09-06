@@ -125,7 +125,7 @@ public class CategoryService implements ICategoryService {
                 cloudinaryService.deleteFiles(existingImageUrls, "products");
             }
             
-            String existingFileUrl = existingProduct.getDownloadUrl();
+            String existingFileUrl = product.getDownloadUrl();
             if (existingFileUrl != null) {
                 cloudinaryService.deleteFile(existingFileUrl, "productsFiles");
             }

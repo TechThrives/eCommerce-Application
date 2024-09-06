@@ -168,7 +168,7 @@ public class ProductService implements IProductService {
             cloudinaryService.deleteFiles(existingImageUrls, "products");
         }
 
-        String existingFileUrl = existingProduct.getDownloadUrl();
+        String existingFileUrl = product.getDownloadUrl();
         if (existingFileUrl != null) {
             cloudinaryService.deleteFile(existingFileUrl, "productsFiles");
         }
