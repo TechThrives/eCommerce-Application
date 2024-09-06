@@ -102,6 +102,16 @@ cd backend
   - **`USER_PROFILE_IMAGE_URL`**: Default URL for user profile images.
 
   - **`STRIPE_SECRET_KEY`**: Secret key for Stripe integration.
+    
+  - **`MAIL_HOST`**: The mail server’s hostname.
+    
+  - **`MAIL_PORT`**: The port to connect to the mail server.
+    
+  - **`MAIL_USERNAME`**: The username for the mail server.
+    
+  - **`MAIL_PASSWORD`**: The password for the mail server.
+    
+  - **`MAIL_DEBUG`**: Enable or disable mail debugging.
 
   - **`BASE_URL`**: Base URL for the Front-End Shop.
 
