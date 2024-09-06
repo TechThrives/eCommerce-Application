@@ -124,6 +124,11 @@ public class CategoryService implements ICategoryService {
             if (existingImageUrls != null && !existingImageUrls.isEmpty()) {
                 cloudinaryService.deleteFiles(existingImageUrls, "products");
             }
+            
+            String existingFileUrl = existingProduct.getDownloadUrl();
+            if (existingFileUrl != null) {
+                cloudinaryService.deleteFile(existingFileUrl, "productsFiles");
+            }
         });
 
         categoryRepository.deleteById(categoryId);

@@ -23,7 +23,7 @@ export default function Checkout() {
 
   const { cartItems } = useCartContext();
 
-  const taxRate = process.env.REACT_APP_TAX_RATE; 
+  const taxRate = parseFloat(process.env.REACT_APP_TAX_RATE); 
 
   const subTotal = useMemo(() => {
     return cartItems.cart.reduce((total, item) => total + item.price, 0);
@@ -89,6 +89,7 @@ export default function Checkout() {
         );
       }
     } catch (error) {
+      console.log(error);
       if (error.response) {
         const { data } = error.response;
         if (data.details && Array.isArray(data.details) && data.message) {

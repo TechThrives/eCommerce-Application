@@ -167,6 +167,12 @@ public class ProductService implements IProductService {
         if (existingImageUrls != null && !existingImageUrls.isEmpty()) {
             cloudinaryService.deleteFiles(existingImageUrls, "products");
         }
+
+        String existingFileUrl = existingProduct.getDownloadUrl();
+        if (existingFileUrl != null) {
+            cloudinaryService.deleteFile(existingFileUrl, "productsFiles");
+        }
+        
         productRepository.deleteById(productId);
     }
 
