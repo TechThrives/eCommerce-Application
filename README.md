@@ -53,8 +53,6 @@ cd backend
 
   - **`APPLICATION_NAME`**: The name of the application.
 
-  - **`MONGODB_URI`**: The URI for MongoDB connection.
-
   - **`DATASOURCE_URL`**: The URL for the MySQL database.
 
   - **`DATASOURCE_USERNAME`**: The username for MySQL database access.

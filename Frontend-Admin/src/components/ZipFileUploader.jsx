@@ -7,7 +7,7 @@ function ZipFileUploader({ zipFile, setZipFile }) {
 
     if (!file) return;
 
-    if (file.type === "application/zip") {
+    if (file.type === "application/zip" || file.type === "application/x-zip-compressed") {
       if (file.size > 10 * 1024 * 1024) {
         // 10MB size limit
         notify("Max file size is 10 MB", "warning");

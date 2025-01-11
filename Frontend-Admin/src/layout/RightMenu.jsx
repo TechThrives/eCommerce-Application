@@ -6,7 +6,7 @@ import axiosConfig from "../utils/axiosConfig";
 import { handleFullScreenClick } from "../script";
 
 export default function RightMenu() {
-  const { setUser, setIsLoading } = useAppContext();
+  const { user, setUser, setIsLoading } = useAppContext();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -43,7 +43,7 @@ export default function RightMenu() {
             className="flex flex-col items-center gap-1"
           >
             <img
-              src={`${process.env.PUBLIC_URL}/assets/images/users/avatar-6.jpg`}
+              src={user?.profileImageUrl}
               alt="User Image"
               className="rounded-full h-8 w-8"
             />
