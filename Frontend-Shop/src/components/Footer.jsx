@@ -88,9 +88,6 @@ export default function Footer() {
             <Link to="/faqs">FAQs</Link>
           </div>
           <div className="text-[12px] text-white/[0.5] hover:text-white cursor-pointer">
-            <Link to="/terms-of-service">Terms of Service</Link>
-          </div>
-          <div className="text-[12px] text-white/[0.5] hover:text-white cursor-pointer">
             <Link to="/privacy-policy">Privacy Policy</Link>
           </div>
         </div>
