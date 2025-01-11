@@ -1,32 +1,38 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { WishListProvider } from "./Features/WishListContext";
-import { AppProvider } from "./Features/AppContext";
-import Layout from "./Layout/Layout";
-import UserLayout from "./Layout/UserLayout";
+import { WishListProvider } from "./features/WishListContext";
+import { AppProvider } from "./features/AppContext";
+import Layout from "./layout/Layout";
+import UserLayout from "./layout/UserLayout";
 // User Pages
-import Account from "./Pages/User/Account";
-import Profile from "./Pages/User/Profile";
-import Invoices from "./Pages/User/Invoices";
-import Reviews from "./Pages/User/Reviews";
+import Account from "./pages/user/Account";
+import Profile from "./pages/user/Profile";
+import Invoices from "./pages/user/Invoices";
+import Reviews from "./pages/user/Reviews";
+import ViewInvoice from "./pages/user/ViewInvoice";
 // Pages
-import Home from "./Pages/Home";
-import WishList from "./Pages/WishList";
-import Category from "./Pages/Category";
-import ProductDetails from "./Pages/ProductDetails";
-import Shop from "./Pages/Shop";
-import Cart from "./Pages/Cart";
-import { CartProvider } from "./Features/CartContext";
-import Checkout from "./Pages/Checkout";
-import PaymentSuccess from "./Pages/PaymentSuccess";
-import NotFound from "./Pages/NotFound";
-import SignIn from "./Pages/SignIn";
-import SignUp from "./Pages/SignUp";
+import Home from "./pages/Home";
+import WishList from "./pages/WishList";
+import Category from "./pages/Category";
+import ProductDetails from "./pages/ProductDetails";
+import Shop from "./pages/Shop";
+import Cart from "./pages/Cart";
+import { CartProvider } from "./features/CartContext";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import NotFound from "./pages/NotFound";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import { ToastContainer } from "react-toastify";
-import ProductReviews from "./Pages/ProductReviews";
-import ViewInvoice from "./Pages/User/ViewInvoice";
+import ProductReviews from "./pages/ProductReviews";
 
 // Private Route
-import PrivateRoute from "./Utils/PrivateRoute";
+import PrivateRoute from "./utils/PrivateRoute";
+import HowItWorks from "./pages/HowItWorks";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import PaymentMethods from "./pages/PaymentMethods";
+import FAQs from "./pages/FAQs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 export default function App() {
   return (
@@ -57,6 +63,12 @@ export default function App() {
                 <Route path="/category/:categorySlug" element={<Category />} />
                 <Route path="/product/:productSlug" element={<ProductDetails />} />
                 <Route path="/product-reviews/:productSlug" element={<ProductReviews />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/payment-methods" element={<PaymentMethods />} />
+                <Route path="/faqs" element={<FAQs />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
