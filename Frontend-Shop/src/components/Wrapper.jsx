@@ -10,7 +10,7 @@ const Wrapper = ({ children, className }) => {
   }, [navigate]);
   return (
     <div
-      className={`w-full max-w-[1366px] px-5 md:px-10 mx-auto ${
+      className={`w-full max-w-[1920px] px-5 md:px-10 mx-auto ${
         className || ""
       }`}
     >
