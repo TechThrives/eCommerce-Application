@@ -158,15 +158,17 @@ canvas {
   }
 
   &::-webkit-scrollbar-thumb {
-      @apply rounded-lg bg-slate-300/50;
+      border-radius: 0.5rem;
+      background-color: rgba(203, 213, 225, 0.5);
   }
 
   &::-webkit-scrollbar-track {
-      @apply bg-transparent rounded-lg;
+    background-color: transparent;
+    border-radius: 0.5rem;
   }
 
   &::-webkit-scrollbar-corner {
-      @apply bg-transparent;
+    background-color: transparent;
   }
 }
 

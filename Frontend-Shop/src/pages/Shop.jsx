@@ -7,7 +7,6 @@ import ProductListCard from "../components/ProductListCard";
 import Loader from "../components/Loader";
 import { MdSearch } from "react-icons/md";
 import AutoCompleteInput from "../components/AutoCompleteInput";
-import debounce from "lodash.debounce";
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
@@ -32,54 +31,48 @@ export default function Shop() {
     }
   }, []);
 
-  // Debounced fetch function
-  const fetchProducts = useCallback(
-    debounce(async () => {
-      try {
-        const queryParams = new URLSearchParams();
+  const fetchProducts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const queryParams = new URLSearchParams();
+      if (searchVal) queryParams.append("searchVal", searchVal);
+      if (selectedTags.length > 0)
+        queryParams.append("tags", selectedTags.join(","));
+      if (minPrice) queryParams.append("minPrice", minPrice);
+      if (maxPrice) queryParams.append("maxPrice", maxPrice);
+      if (sortBy) queryParams.append("sortBy", sortBy);
 
-        if (searchVal) queryParams.append("searchVal", searchVal);
-        if (selectedTags.length > 0)
-          queryParams.append("tags", selectedTags.join(","));
-        if (minPrice) queryParams.append("minPrice", minPrice);
-        if (maxPrice) queryParams.append("maxPrice", maxPrice);
-        if (sortBy) queryParams.append("sortBy", sortBy);
+      queryParams.append("pageNo", currentPage - 1);
+      queryParams.append("pageSize", pageSize);
 
-        queryParams.append("pageNo", currentPage - 1);
-        queryParams.append("pageSize", pageSize);
-
-        const response = await axiosConfig.get(
-          `/api/products?${queryParams.toString()}`
-        );
-        if (response.data) {
-          setProducts(response.data.content);
-          setTotalPages(response.data.totalPages);
-          setTotalElements(response.data.totalElements);
-        }
-      } catch (error) {
-        if (error.response) {
-          const { data } = error.response;
-          if (data.details && Array.isArray(data.details) && data.message) {
-            notify(data.message || "An unexpected error occurred.", "error");
-          }
-        } else {
-          notify("An unexpected error occurred.", "error");
-        }
+      const response = await axiosConfig.get(
+        `/api/products?${queryParams.toString()}`
+      );
+      if (response.data) {
+        setProducts(response.data.content);
+        setTotalPages(response.data.totalPages);
+        setTotalElements(response.data.totalElements);
       }
-      setIsLoading(false);
-    }, 500), // Debounce delay
-    [selectedTags, minPrice, maxPrice, sortBy, currentPage]
-  );
+    } catch (error) {
+      if (error.response) {
+        const { data } = error.response;
+        if (data.details && Array.isArray(data.details) && data.message) {
+          notify(data.message || "An unexpected error occurred.", "error");
+        }
+      } else {
+        notify("An unexpected error occurred.", "error");
+      }
+    }
+    setIsLoading(false);
+  }, [currentPage, searchVal, selectedTags, minPrice, maxPrice, sortBy]);
 
   useEffect(() => {
-    setIsLoading(true);
     fetchProducts();
     scrollToTop();
-  }, [currentPage, fetchProducts, scrollToTop]);
+  }, [currentPage, scrollToTop]);
 
   const handleValChange = (e) => {
     setSearchVal(e.target.value);
-    fetchProducts(); // Call fetchProducts for search input change
   };
 
   const toggleItemSelection = (tag) => {
@@ -91,7 +84,7 @@ export default function Shop() {
   };
 
   const handleApplyFilters = () => {
-    setCurrentPage(1); // Reset to first page when applying filters
+    setCurrentPage(1);
     fetchProducts();
   };
 

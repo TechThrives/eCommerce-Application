@@ -28,7 +28,7 @@ const RelatedProductCard = ({ product }) => {
       className="transform overflow-hidden bg-white duration-200 hover:scale-105 cursor-pointer flex flex-col items-center relative"
     >
       <img
-      className="h-full object-cover"
+        className="min-h-48 h-48 object-cover"
         src={product.imageUrls[0]}
         alt={product.name}
       />
